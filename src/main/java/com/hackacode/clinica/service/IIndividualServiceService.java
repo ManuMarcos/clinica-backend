@@ -10,6 +10,7 @@ public interface IIndividualServiceService {
 
     IndividualServiceDTO save(IndividualServiceDTO individualServiceDTO);
     List<IndividualServiceDTO> findAll(Pageable pageable);
+    IndividualServiceDTO findById(Long id);
     void delete(Long id);
     IndividualServiceDTO entityToDto(IndividualService entity);
     boolean existsById(Long id);

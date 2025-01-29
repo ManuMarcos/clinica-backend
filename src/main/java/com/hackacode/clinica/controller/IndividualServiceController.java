@@ -23,6 +23,11 @@ public class IndividualServiceController {
         return individualServiceService.findAll(pageable);
     }
 
+    @GetMapping("/{serviceId}")
+    public ResponseEntity<IndividualServiceDTO> getById(@PathVariable Long serviceId) {
+        return ResponseEntity.ok(individualServiceService.findById(serviceId));
+    }
+
     @PostMapping
     public ResponseEntity<IndividualServiceDTO> save(@RequestBody @Valid IndividualServiceDTO individualServiceDTO) {
         var individualService = individualServiceService.save(individualServiceDTO);
