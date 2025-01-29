@@ -19,42 +19,44 @@ import java.util.Map;
 public class GlobalExcepcionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex, WebRequest request) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errors.put(error.getField(), error.getDefaultMessage())
         );
-        return ResponseEntity.badRequest().body(errors);
+        return this.buildResponseError(ex, request, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleAllExceptions(Exception ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
+        return this.buildResponseError(ex, request, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgumentExceptions(IllegalArgumentException ex, WebRequest request) {
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("timestamp", Instant.now());
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("error", "Bad Request");
-        response.put("message", ex.getMessage());
-        response.put("path", request.getDescription(false).replace("uri=", ""));
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        return this.buildResponseError(ex, request, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<String> handleUserNotFound(UsernameNotFoundException ex) {
-        return new ResponseEntity<>("Username not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<Object> handleUserNotFound(UsernameNotFoundException ex, WebRequest request) {
+        return this.buildResponseError(ex, request, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> handleResourceNotFound(ResourceNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<Object> handleResourceNotFound(ResourceNotFoundException ex, WebRequest request) {
+        return this.buildResponseError(ex, request, HttpStatus.NOT_FOUND);
     }
 
+    private ResponseEntity<Object> buildResponseError(Exception ex, WebRequest request, HttpStatus status) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("timestamp", Instant.now());
+        response.put("status", status.value());
+        response.put("error", status.getReasonPhrase());
+        response.put("message", ex.getMessage());
+        response.put("path", request.getDescription(false).replace("uri=", ""));
 
+        return ResponseEntity.status(status).body(response);
+    }
 
 
 

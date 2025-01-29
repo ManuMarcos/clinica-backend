@@ -21,6 +21,7 @@ public class DoctorResponseDTO {
     private String email;
     private Double salary;
     private String speciality;
+    @JsonProperty("date_of_birth")
     private LocalDate dateOfBirth;
     private Role role;
 }

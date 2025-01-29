@@ -4,6 +4,7 @@ import com.hackacode.clinica.dto.LoginRequestDTO;
 import com.hackacode.clinica.dto.RegisterRequestDTO;
 import com.hackacode.clinica.dto.TokenResponseDTO;
 import com.hackacode.clinica.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @Operation(summary = "Register a new user", description = "Register a new Patient, Doctor or Admin")
     @PostMapping("/register")
     public ResponseEntity<TokenResponseDTO> register(@Valid @RequestBody RegisterRequestDTO registerRequestDTO) {
         final TokenResponseDTO tokenResponseDTO = this.authService.register(registerRequestDTO);
