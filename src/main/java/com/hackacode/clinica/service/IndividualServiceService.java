@@ -43,22 +43,28 @@ public class IndividualServiceService implements IIndividualServiceService {
         individualServiceRepository.deleteById(id);
     }
 
-    private IndividualService dtoToEntity(IndividualServiceDTO dto){
-        return IndividualService.builder()
-                .name(dto.getName())
-                .price(dto.getPrice())
-                .serviceCode(dto.getServiceCode())
-                .description(dto.getDescription())
-                .build();
+    @Override
+    public boolean existsById(Long id) {
+        return individualServiceRepository.existsById(id);
     }
 
-    private IndividualServiceDTO entityToDto(IndividualService entity){
+    @Override
+    public IndividualServiceDTO entityToDto(IndividualService entity){
         return IndividualServiceDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
                 .description(entity.getDescription())
                 .serviceCode(entity.getServiceCode())
                 .price(entity.getPrice())
+                .build();
+    }
+
+    private IndividualService dtoToEntity(IndividualServiceDTO dto){
+        return IndividualService.builder()
+                .name(dto.getName())
+                .price(dto.getPrice())
+                .serviceCode(dto.getServiceCode())
+                .description(dto.getDescription())
                 .build();
     }
 

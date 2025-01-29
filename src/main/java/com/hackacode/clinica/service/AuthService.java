@@ -30,7 +30,6 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final DoctorController doctorController;
     private final UserService userService;
 
     @Transactional
@@ -117,7 +116,7 @@ public class AuthService {
                 .email(request.getEmail())
                 .name(request.getName())
                 .surname(request.getSurname())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .dateOfBirth(request.getDateOfBirth())
                 .role(request.getRole())
                 .build();

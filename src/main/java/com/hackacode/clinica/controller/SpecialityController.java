@@ -45,7 +45,7 @@ public class SpecialityController {
     @DeleteMapping("/{specialityId}")
     public ResponseEntity<String> delete(@PathVariable Long specialityId) {
         specialityService.delete(specialityId);
-        return ResponseEntity.ok("Resource deleted succesfully");
+        return ResponseEntity.ok("Speciality deleted succesfully");
     }
 
 }
