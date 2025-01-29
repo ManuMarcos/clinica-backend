@@ -3,6 +3,7 @@ package com.hackacode.clinica.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hackacode.clinica.model.Role;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -31,7 +32,7 @@ public class RegisterRequestDTO{
     @NotBlank(message = "The dni cannot be empty")
     private String dni;
 
-    @JsonProperty("date_of_birth")
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "The date of birth cannot be null")
     private LocalDate dateOfBirth;
@@ -41,5 +42,15 @@ public class RegisterRequestDTO{
 
     @NotNull(message = "The password cannot be null")
     @NotBlank(message = "The password cannot be empty")
+    //TODO: Falta validar la complejidad de la contrasena
     private String password;
+
+    private Double salary;
+
+
+    private Long specialityId;
+
+    @Valid
+
+    private HealthInsuranceDTO healthInsurance;
 }

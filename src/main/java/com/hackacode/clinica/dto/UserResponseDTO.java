@@ -37,7 +37,6 @@ public class UserResponseDTO {
     @NotBlank(message = "The dni cannot be empty")
     private String dni;
 
-    @JsonProperty("date_of_birth")
     @NotNull(message = "The date of birth cannot be null")
     private LocalDate dateOfBirth;
 

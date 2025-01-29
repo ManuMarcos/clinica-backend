@@ -7,6 +7,9 @@ import java.util.List;
 
 public interface ISpecialityService {
 
-    SpecialityResponseDTO saveSpeciality(SpecialityRequestDTO specialityRequestDTO);
+    SpecialityResponseDTO save(SpecialityRequestDTO specialityRequestDTO);
     List<SpecialityResponseDTO> findAll();
+    SpecialityResponseDTO update(Long id, SpecialityRequestDTO specialityRequestDTO);
+    void delete(Long id);
+    SpecialityResponseDTO findById(Long id);
 }

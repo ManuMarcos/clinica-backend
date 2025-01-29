@@ -21,7 +21,7 @@ public class SpecialityController {
     @Secured("ROLE_ADMIN")
     @PostMapping
     public ResponseEntity<SpecialityResponseDTO> create(@RequestBody SpecialityRequestDTO specialityRequestDTO) {
-        SpecialityResponseDTO specialityResponseDTO = specialityService.saveSpeciality(specialityRequestDTO);
+        SpecialityResponseDTO specialityResponseDTO = specialityService.save(specialityRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(specialityResponseDTO);
     }
 
@@ -29,4 +29,23 @@ public class SpecialityController {
     public ResponseEntity<List<SpecialityResponseDTO>> getAll(){
         return ResponseEntity.ok(specialityService.findAll());
     }
+
+    @GetMapping("/{specialityId}")
+    public ResponseEntity<SpecialityResponseDTO> findById(@PathVariable Long specialityId) {
+        return ResponseEntity.ok(specialityService.findById(specialityId));
+    }
+
+    @Secured("ROLE_ADMIN")
+    @PutMapping("/{specialityId}")
+    public SpecialityResponseDTO update(@PathVariable Long specialityId, @RequestBody SpecialityRequestDTO specialityRequestDTO) {
+        return specialityService.update(specialityId, specialityRequestDTO);
+    }
+
+    @Secured("ROLE_ADMIN")
+    @DeleteMapping("/{specialityId}")
+    public ResponseEntity<String> delete(@PathVariable Long specialityId) {
+        specialityService.delete(specialityId);
+        return ResponseEntity.ok("Resource deleted succesfully");
+    }
+
 }

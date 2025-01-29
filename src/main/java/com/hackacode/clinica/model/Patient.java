@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 public class Patient extends User {
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "health_insurance_id", unique = true)
     private HealthInsurance healthInsurance;
 
