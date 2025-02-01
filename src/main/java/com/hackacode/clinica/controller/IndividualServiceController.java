@@ -2,6 +2,7 @@ package com.hackacode.clinica.controller;
 
 import com.hackacode.clinica.dto.IndividualServiceDTO;
 import com.hackacode.clinica.service.IIndividualServiceService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -12,8 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/individual_services")
 @RequiredArgsConstructor
+@Tag(name = "Services")
+@RequestMapping("/services")
 public class IndividualServiceController {
 
     private final IIndividualServiceService individualServiceService;
@@ -37,6 +39,6 @@ public class IndividualServiceController {
     @DeleteMapping("/{serviceId}")
     public ResponseEntity<String> delete(@PathVariable Long serviceId) {
         individualServiceService.delete(serviceId);
-        return ResponseEntity.ok("Individual Service deleted successfully.");
+        return ResponseEntity.ok("Service deleted successfully.");
     }
 }

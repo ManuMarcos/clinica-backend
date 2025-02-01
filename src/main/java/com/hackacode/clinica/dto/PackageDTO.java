@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @Builder
-@JsonPropertyOrder({"id","name", "package_code","individual_services"})
+@JsonPropertyOrder({"id","name", "package_code","services"})
 public class PackageDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -26,10 +26,10 @@ public class PackageDTO {
     @NotBlank(message = "The package_code cannot be empty")
     private String packageCode;
 
-    @JsonProperty(value = "individual_services",access = JsonProperty.Access.READ_ONLY)
+    @JsonProperty(value = "services",access = JsonProperty.Access.READ_ONLY)
     private List<IndividualServiceDTO> individualServices;
 
-    @NotNull(message = "The individual_services_ids cannot be null")
+    @NotNull(message = "The services_ids cannot be null")
     @JsonProperty(value = "individual_services_ids",access = JsonProperty.Access.WRITE_ONLY)
     private List<Integer> individualServicesIds;
 }

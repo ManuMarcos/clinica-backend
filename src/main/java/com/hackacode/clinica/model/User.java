@@ -1,6 +1,7 @@
 package com.hackacode.clinica.model;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Data
-@Builder
+@SuperBuilder
 @RequiredArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -30,8 +31,8 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String dni;
 
-    @Column(name = "date_of_birth", nullable = false)
-    private LocalDate dateOfBirth;
+    @Column(name = "birth_date", nullable = false)
+    private LocalDate birthDate;
 
     @Column(unique = true, nullable = false)
     private String email;

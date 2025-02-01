@@ -3,6 +3,7 @@ package com.hackacode.clinica.controller;
 import com.hackacode.clinica.dto.PackageDTO;
 import com.hackacode.clinica.service.IPackageService;
 import com.hackacode.clinica.service.PackageService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Packages")
 @RequestMapping("/packages")
 public class PackageController {
 

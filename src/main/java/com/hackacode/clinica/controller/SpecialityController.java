@@ -3,6 +3,7 @@ package com.hackacode.clinica.controller;
 import com.hackacode.clinica.dto.SpecialityRequestDTO;
 import com.hackacode.clinica.dto.SpecialityResponseDTO;
 import com.hackacode.clinica.service.ISpecialityService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/specialities")
 @RequiredArgsConstructor
+@Tag(name = "Specialities")
+@RequestMapping("/specialities")
 public class SpecialityController {
 
     private final ISpecialityService specialityService;

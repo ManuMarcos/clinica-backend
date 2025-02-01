@@ -5,6 +5,9 @@ import com.hackacode.clinica.exception.ResourceNotFoundException;
 import com.hackacode.clinica.model.User;
 import com.hackacode.clinica.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,8 +20,8 @@ public class UserService implements IUserService {
     private final IUserRepository userRepository;
 
     @Override
-    public List<UserResponseDTO> findAll() {
-        var users = userRepository.findAll();
+    public Page<UserResponseDTO> findAll(Pageable pageable) {
+        var users = userRepository.findAll(pageable);
         List<UserResponseDTO> usersDTO = new ArrayList<>();
 
         for(var user : users) {
@@ -29,11 +32,11 @@ public class UserService implements IUserService {
                             .email(user.getEmail())
                             .surname(user.getSurname())
                             .role(user.getRole())
-                            .dateOfBirth(user.getDateOfBirth())
+                            .birthDate(user.getBirthDate())
                             .build()
             );
         }
-        return usersDTO;
+        return new PageImpl<>(usersDTO, pageable, usersDTO.size());
     }
 
     @Override
@@ -46,7 +49,7 @@ public class UserService implements IUserService {
                 .surname(user.getSurname())
                 .role(user.getRole())
                 .email(user.getEmail())
-                .dateOfBirth(user.getDateOfBirth())
+                .birthDate(user.getBirthDate())
                 .build();
     }
 

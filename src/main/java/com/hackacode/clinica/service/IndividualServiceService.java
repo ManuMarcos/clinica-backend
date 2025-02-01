@@ -38,7 +38,7 @@ public class IndividualServiceService implements IIndividualServiceService {
     @Override
     public IndividualServiceDTO findById(Long id) {
         var individualService = individualServiceRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Individual Service not found with id: " + id)
+                () -> new ResourceNotFoundException("Service not found with id: " + id)
         );
         return entityToDto(individualService);
     }
@@ -46,7 +46,7 @@ public class IndividualServiceService implements IIndividualServiceService {
     @Override
     public void delete(Long id) {
         if(!individualServiceRepository.existsById(id)){
-            throw new ResourceNotFoundException("Individual service with id " + id + " not found");
+            throw new ResourceNotFoundException("Service with id " + id + " not found");
         }
         individualServiceRepository.deleteById(id);
     }

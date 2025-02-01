@@ -9,12 +9,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.aspectj.bridge.IMessage;
 
 import java.time.LocalDate;
 import java.util.Date;
 
-@Builder
+@SuperBuilder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,7 +26,7 @@ public class UserResponseDTO {
     private String surname;
     private String email;
     private String dni;
-    @JsonProperty("date_of_birth")
-    private LocalDate dateOfBirth;
+    @JsonProperty("birth_date")
+    private LocalDate birthDate;
     private Role role;
 }

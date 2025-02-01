@@ -78,7 +78,7 @@ public class AuthService {
         Doctor doctor = new Doctor();
         doctor.setEmail(request.getEmail());
         doctor.setPassword(passwordEncoder.encode(request.getPassword()));
-        doctor.setDateOfBirth(request.getDateOfBirth());
+        doctor.setBirthDate(request.getBirthDate());
         doctor.setDni(String.valueOf(request.getDni()));
         doctor.setName(request.getName());
         doctor.setSurname(request.getSurname());
@@ -105,7 +105,7 @@ public class AuthService {
         patient.setSurname(request.getSurname());
         patient.setPassword(passwordEncoder.encode(request.getPassword()));
         patient.setRole(request.getRole());
-        patient.setDateOfBirth(request.getDateOfBirth());
+        patient.setBirthDate(request.getBirthDate());
         patient.setHealthInsurance(healthInsurance);
         return patient;
     }
@@ -117,7 +117,7 @@ public class AuthService {
                 .name(request.getName())
                 .surname(request.getSurname())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .dateOfBirth(request.getDateOfBirth())
+                .birthDate(request.getBirthDate())
                 .role(request.getRole())
                 .build();
     }

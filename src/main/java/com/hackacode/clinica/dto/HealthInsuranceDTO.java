@@ -1,5 +1,6 @@
 package com.hackacode.clinica.dto;
 
+import com.hackacode.clinica.model.HealthInsurance;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -21,4 +22,13 @@ public class HealthInsuranceDTO {
     @NotNull(message = "The number of the Health Insurance cannot be null")
     @NotBlank(message = "The number of the Health Insurance cannot be empty")
     private String number;
+
+    public static HealthInsuranceDTO from(HealthInsurance healthInsurance) {
+        return HealthInsuranceDTO.builder()
+                .name(healthInsurance.getName())
+                .number(healthInsurance.getNumber())
+                .plan(healthInsurance.getPlan())
+                .build();
+    }
+
 }

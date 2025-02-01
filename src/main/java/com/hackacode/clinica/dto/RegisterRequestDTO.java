@@ -34,9 +34,9 @@ public class RegisterRequestDTO{
 
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @NotNull(message = "The date of birth cannot be null")
-    @JsonProperty("date_of_birth")
-    private LocalDate dateOfBirth;
+    @NotNull(message = "The birth date cannot be null")
+    @JsonProperty("birth_date")
+    private LocalDate birthDate;
 
     @NotNull(message = "The role cannot be null")
     private Role role;
@@ -53,5 +53,6 @@ public class RegisterRequestDTO{
     private Long specialityId;
 
     @Valid
+    @JsonProperty("health_insurance")
     private HealthInsuranceDTO healthInsurance;
 }
