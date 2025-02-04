@@ -6,7 +6,6 @@ import com.hackacode.clinica.model.IndividualService;
 import com.hackacode.clinica.repository.IIndividualServiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
