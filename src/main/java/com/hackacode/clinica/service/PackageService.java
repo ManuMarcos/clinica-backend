@@ -1,38 +1,46 @@
 package com.hackacode.clinica.service;
 
-import com.hackacode.clinica.dto.IndividualServiceDTO;
+import com.hackacode.clinica.dto.DiscountDTO;
+import com.hackacode.clinica.dto.ServiceDTO;
 import com.hackacode.clinica.dto.PackageDTO;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
-import com.hackacode.clinica.model.IndividualService;
+import com.hackacode.clinica.model.Patient;
+import com.hackacode.clinica.model.Service;
 import com.hackacode.clinica.model.Package;
-import com.hackacode.clinica.repository.IIndividualServiceRepository;
+import com.hackacode.clinica.model.User;
+import com.hackacode.clinica.repository.IPatientRepository;
+import com.hackacode.clinica.repository.IServiceRepository;
 import com.hackacode.clinica.repository.IPackageRepository;
+import com.hackacode.clinica.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@org.springframework.stereotype.Service
 @RequiredArgsConstructor
 public class PackageService implements IPackageService {
 
     private final IPackageRepository packageRepository;
-    private final IIndividualServiceService individualService;
-    private final IIndividualServiceRepository individualServiceRepository;
+    private final IServiceService Service;
+    private final IPatientRepository patientRepository;
+    private final IServiceRepository ServiceRepository;
+    private final AuthService authService;
 
     @Override
     public PackageDTO save(PackageDTO packageDTO) {
         this.validatePackageCode(packageDTO.getPackageCode());
         Package packageEntity = dtoToEntity(packageDTO);
-        for(Integer id : packageDTO.getIndividualServicesIds()){
-            IndividualService individualService = individualServiceRepository.findById(Integer.toUnsignedLong(id))
+        for(Integer id : packageDTO.getServicesId()){
+            Service Service = ServiceRepository.findById(Integer.toUnsignedLong(id))
                     .orElseThrow(() -> new IllegalArgumentException("Individual service with id " + id + " not found"));
-            packageEntity.addIndividualService(individualService);
+            packageEntity.addService(Service);
         }
         var savedPackageEntity = packageRepository.save(packageEntity);
-        return entityToDto(savedPackageEntity);
+        return toDTO(savedPackageEntity);
     }
 
     @Override
@@ -40,8 +48,9 @@ public class PackageService implements IPackageService {
         var packages = packageRepository.findAll(pageable);
         List<PackageDTO> packageDTOS = new ArrayList<>();
 
+        BigDecimal precioBase = BigDecimal.ZERO;
         for(Package pack : packages){
-            packageDTOS.add(entityToDto(pack));
+            packageDTOS.add(toDTO(pack));
         }
         return packageDTOS;
     }
@@ -54,28 +63,13 @@ public class PackageService implements IPackageService {
 
     @Override
     public PackageDTO findById(Long id) {
-        return entityToDto(this.getById(id));
+        return toDTO(this.getById(id));
     }
 
     private Package dtoToEntity(PackageDTO dto){
         Package entity = new Package();
         entity.setPackageCode(dto.getPackageCode());
-        entity.setName(dto.getName());
         return entity;
-    }
-
-    private PackageDTO entityToDto(Package entity){
-        List<IndividualServiceDTO> individualServiceDTOS = new ArrayList<>();
-        for(IndividualService service : entity.getServices()){
-            individualServiceDTOS.add(individualService.entityToDto(service));
-        }
-
-        return PackageDTO.builder()
-                .name(entity.getName())
-                .packageCode(entity.getPackageCode())
-                .individualServices(individualServiceDTOS)
-                .id(entity.getId())
-                .build();
     }
 
     private void validatePackageCode(String packageCode){
@@ -88,6 +82,57 @@ public class PackageService implements IPackageService {
         return packageRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Package with id " + id + " not found")
         );
+    }
+
+    private PackageDTO toDTO(Package servicePackage) {
+        boolean hasHealthInsurance = false;
+        if(authService.isPatient()){
+            String userEmail = authService.getCurrentUserEmail();
+            Patient patient = patientRepository.findByEmail(userEmail).orElseThrow(
+                    () -> new ResourceNotFoundException("Patient with email " + userEmail+ " not found")
+            );
+            if(patient.getHealthInsurance() != null){
+                hasHealthInsurance = true;
+            }
+        }
+
+        BigDecimal basePrice = BigDecimal.ZERO;
+
+        List<ServiceDTO> serviceDTOS = new ArrayList<>();
+        List<DiscountDTO> discountDTOS = new ArrayList<>();
+        for(Service service : servicePackage.getServices()){
+            basePrice = basePrice.add(service.getPrice());
+            serviceDTOS.add(ServiceDTO.from(service));
+        }
+
+        //Aplica descuento del 15% por ser paquete
+        BigDecimal packageDiscount = basePrice.multiply(BigDecimal.valueOf(0.15));
+        BigDecimal finalPrice = basePrice.subtract(packageDiscount);
+        DiscountDTO packageDiscountDto = DiscountDTO.builder()
+                .amount(packageDiscount)
+                .description("Descuento por paquete")
+                .build();
+        discountDTOS.add(packageDiscountDto);
+
+        //Aplica descuento adicional del 20% si tiene OS
+        if (hasHealthInsurance) {
+            BigDecimal healthInsuranceDiscount = finalPrice.multiply(BigDecimal.valueOf(0.20));
+            finalPrice = finalPrice.subtract(healthInsuranceDiscount);
+            DiscountDTO healthInsuranceDiscountDto = DiscountDTO.builder()
+                    .amount(healthInsuranceDiscount)
+                    .description("Descuento por obra social")
+                    .build();
+            discountDTOS.add(healthInsuranceDiscountDto);
+        }
+
+        return PackageDTO.builder()
+                .id(servicePackage.getId())
+                .services(serviceDTOS)
+                .packageCode(servicePackage.getPackageCode())
+                .basePrice(basePrice)
+                .finalPrice(finalPrice)
+                .discounts(discountDTOS)
+                .build();
     }
 
 }

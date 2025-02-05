@@ -9,8 +9,12 @@ import java.util.List;
 
 @Entity
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-@SuperBuilder
-public class Package extends Service {
+@Builder
+public class Package {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "package_code", unique = true)
     private String packageCode;
@@ -21,14 +25,14 @@ public class Package extends Service {
             joinColumns = @JoinColumn(name = "package_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id")
     )
-    private List<IndividualService> services = new ArrayList<>();
+    private List<Service> services = new ArrayList<>();
 
-    @Override
+
     public Double calculatePrice() {
         return 0.0;
     }
 
-    public void addIndividualService(IndividualService individualService) {
-        this.services.add(individualService);
+    public void addService(Service service) {
+        this.services.add(service);
     }
 }

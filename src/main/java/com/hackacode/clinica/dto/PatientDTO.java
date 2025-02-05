@@ -1,39 +1,24 @@
 package com.hackacode.clinica.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hackacode.clinica.model.HealthInsurance;
 import com.hackacode.clinica.model.Patient;
 import com.hackacode.clinica.model.Role;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
-@Builder
+@SuperBuilder
 @Getter @Setter
-public class PatientDTO {
-    private Long id;
-    private String dni;
-    private String name;
-    private String surname;
-    private String email;
-    @JsonProperty("birth_date")
-    private LocalDate birthDate;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class PatientDTO extends UserDTO{
+
     @JsonProperty("health_insurance")
     private HealthInsuranceDTO healthInsurance;
-
-    public static PatientDTO from(Patient patient) {
-        return PatientDTO.builder()
-                .id(patient.getId())
-                .dni(patient.getDni())
-                .name(patient.getName())
-                .surname(patient.getSurname())
-                .email(patient.getEmail())
-                .birthDate(patient.getBirthDate())
-                .healthInsurance(HealthInsuranceDTO.from(patient.getHealthInsurance()))
-                .build();
-    }
 
 }

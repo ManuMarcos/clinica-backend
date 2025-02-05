@@ -30,7 +30,6 @@ public class UserController {
     private final IUserService userService;
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-
     @GetMapping
     public ResponseEntity<PaginatedResponseDTO<UserResponseDTO>> getAll(Pageable pageable) {
         return ResponseEntity.ok(PaginatedResponseDTO.fromPage(userService.findAll(pageable)));

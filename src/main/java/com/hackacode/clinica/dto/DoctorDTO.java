@@ -1,47 +1,29 @@
 package com.hackacode.clinica.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.hackacode.clinica.model.Doctor;
 import com.hackacode.clinica.model.Role;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.hackacode.clinica.util.Views;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-@Builder
-@NoArgsConstructor
-public class DoctorDTO {
-    private Long id;
-    private String dni;
-    private String name;
-    private String surname;
-    private String email;
-    private Double salary;
+@Getter @Setter
+@SuperBuilder
+public class DoctorDTO extends UserDTO {
+
+    private BigDecimal salary;
+
     private String speciality;
-    @JsonProperty("birth_date")
-    private LocalDate birthDate;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<WorkingHourDTO> workingHours;
 
-    public static DoctorDTO from(Doctor doctor) {
-        return DoctorDTO.builder()
-                .id(doctor.getId())
-                .dni(doctor.getDni())
-                .name(doctor.getName())
-                .surname(doctor.getSurname())
-                .email(doctor.getEmail())
-                .salary(doctor.getSalary())
-                .speciality(doctor.getSpeciality().getName())
-                .birthDate(doctor.getBirthDate())
-                .workingHours(doctor.getWorkingHours().stream().map(
-                        WorkingHourDTO::from
-                ).toList())
-                .build();
-    }
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Long specialityId;
 
 }

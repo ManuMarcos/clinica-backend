@@ -1,5 +1,6 @@
 package com.hackacode.clinica.service;
 
+import com.hackacode.clinica.config.JwtAuthenticationFilter;
 import com.hackacode.clinica.controller.DoctorController;
 import com.hackacode.clinica.dto.LoginRequestDTO;
 import com.hackacode.clinica.dto.RegisterRequestDTO;
@@ -14,10 +15,15 @@ import com.hackacode.clinica.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
@@ -31,26 +37,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
-
-    @Transactional
-    public TokenResponseDTO register(RegisterRequestDTO registerRequestDTO) {
-        this.validateUniqueConstraints(registerRequestDTO);
-        if(registerRequestDTO.getRole() == Role.DOCTOR) {
-            var newDoctor = validateAndCreateDoctorFromDto(registerRequestDTO);
-            var savedDoctor = doctorRepository.save(newDoctor);
-            return new TokenResponseDTO(jwtService.generateToken(savedDoctor));
-        }
-        else if(registerRequestDTO.getRole() == Role.PATIENT) {
-            var newPatient = validateAndCreatePatientFromDto(registerRequestDTO);
-            var savedPatient = patientRepository.save(newPatient);
-            return new TokenResponseDTO(jwtService.generateToken(savedPatient));
-        }
-        else { //Role = ADMIN
-            var newUser = createUser(registerRequestDTO);
-            var savedUser = userRepository.save(newUser);
-            return new TokenResponseDTO(jwtService.generateToken(savedUser));
-        }
-    }
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     public TokenResponseDTO login(LoginRequestDTO loginRequestDTO) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.email(), loginRequestDTO.password()));
@@ -59,78 +46,38 @@ public class AuthService {
         return new TokenResponseDTO(token);
     }
 
-
-    private UserResponseDTO userToDTO(User user) {
+    public String getJwtToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getCredentials() instanceof String) {
+            return (String) authentication.getCredentials();
+        }
         return null;
     }
 
-    private Doctor validateAndCreateDoctorFromDto(RegisterRequestDTO request) {
-        if (request.getSpecialityId() == null) {
-            throw new IllegalArgumentException("Doctors must have speciality");
-        }
-
-        if (request.getSalary() == null) {
-            throw new IllegalArgumentException("Doctors must have salary");
-        }
-        Speciality speciality = specialityRepository.findById(request.getSpecialityId())
-                .orElseThrow(() -> new ResourceNotFoundException("Speciality not found"));
-
-        Doctor doctor = new Doctor();
-        doctor.setEmail(request.getEmail());
-        doctor.setPassword(passwordEncoder.encode(request.getPassword()));
-        doctor.setBirthDate(request.getBirthDate());
-        doctor.setDni(String.valueOf(request.getDni()));
-        doctor.setName(request.getName());
-        doctor.setSurname(request.getSurname());
-        doctor.setSalary(request.getSalary());
-        doctor.setRole(request.getRole());
-        doctor.setSpeciality(speciality);
-        return doctor;
+    public boolean isPatient(){
+        return hasRole("PATIENT");
     }
 
-    private Patient validateAndCreatePatientFromDto(RegisterRequestDTO request) {
-        if(request.getHealthInsurance() == null) {
-            throw new IllegalArgumentException("Patient must have Health Insurance");
-        }
-
-        HealthInsurance healthInsurance = HealthInsurance.builder()
-                .plan(request.getHealthInsurance().getPlan())
-                .name(request.getHealthInsurance().getName())
-                .number(request.getHealthInsurance().getNumber())
-                .build();
-        Patient patient = new Patient();
-        patient.setEmail(request.getEmail());
-        patient.setDni(request.getDni());
-        patient.setName(request.getName());
-        patient.setSurname(request.getSurname());
-        patient.setPassword(passwordEncoder.encode(request.getPassword()));
-        patient.setRole(request.getRole());
-        patient.setBirthDate(request.getBirthDate());
-        patient.setHealthInsurance(healthInsurance);
-        return patient;
+    public boolean isAdmin() {
+        return hasRole("ADMIN");
     }
 
-    private User createUser(RegisterRequestDTO request) {
-        return User.builder()
-                .dni(request.getDni())
-                .email(request.getEmail())
-                .name(request.getName())
-                .surname(request.getSurname())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .birthDate(request.getBirthDate())
-                .role(request.getRole())
-                .build();
+    private boolean hasRole(String role) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+            return authorities.stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_" + role));
+        }
+        return false;
     }
 
-    private void validateUniqueConstraints(RegisterRequestDTO request){
-        if(userService.existsByDni(request.getDni())){
-            throw new IllegalArgumentException("Dni is already in use");
+    public String getCurrentUserEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            return ((UserDetails) authentication.getPrincipal()).getUsername();
         }
-        if(userService.existsByEmail(request.getEmail())){
-            throw new IllegalArgumentException("Email is already in use");
-        }
+        return null;
     }
-
 
 
 

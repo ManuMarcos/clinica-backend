@@ -3,6 +3,8 @@ package com.hackacode.clinica.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,4 +17,5 @@ public class Speciality {
     @Column(name = "speciality_id")
     private Long specialityId;
     private String name;
+
 }

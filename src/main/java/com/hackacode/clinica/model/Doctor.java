@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
@@ -15,7 +16,16 @@ public class Doctor extends User {
     @JoinColumn(name = "speciality_id")
     private Speciality speciality;
 
-    private Double salary;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal salary;
+
+    @ManyToMany
+    @JoinTable(
+            name = "doctor_service",
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            inverseJoinColumns = @JoinColumn(name = "service_id")
+    )
+    private List<Service> services;
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WorkingHour> workingHours;

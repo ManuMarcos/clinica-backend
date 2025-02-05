@@ -3,6 +3,7 @@ package com.hackacode.clinica.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Entity

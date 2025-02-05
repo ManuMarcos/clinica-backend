@@ -17,8 +17,10 @@ public class Consultation {
     private Long consultationId;
 
     private LocalDateTime date;
+
     private String comments;
 
-    @ManyToOne
-    private Patient patient;
+    @OneToOne
+    @JoinColumn(name = "appointment_id", nullable = false)
+    private Appointment appointment;
 }

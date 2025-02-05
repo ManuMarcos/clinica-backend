@@ -1,23 +1,27 @@
 package com.hackacode.clinica.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Builder
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "appointment_id")
     private Long appointmentId;
 
-    @Column(name = "date_time")
-    private LocalDateTime dateTime;
+    @Enumerated(EnumType.STRING)
+    private AppointmentStatus status;
+
+    @Column(name = "start_time", nullable = false)
+    private LocalDateTime startTime;
+
+    @Column(name = "end_time", nullable = false)
+    private LocalDateTime endTime;
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
@@ -27,7 +31,7 @@ public class Appointment {
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
 
-    @OneToOne
+    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
     private Consultation consultation;
 
     @OneToOne(optional = false)

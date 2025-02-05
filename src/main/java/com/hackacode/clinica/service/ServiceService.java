@@ -1,82 +1,72 @@
 package com.hackacode.clinica.service;
 
-import com.hackacode.clinica.dto.IndividualServiceDTO;
+import com.hackacode.clinica.dto.ServiceDTO;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
-import com.hackacode.clinica.model.IndividualService;
-import com.hackacode.clinica.repository.IIndividualServiceRepository;
+import com.hackacode.clinica.model.Package;
+import com.hackacode.clinica.model.Service;
+import com.hackacode.clinica.repository.IPackageRepository;
+import com.hackacode.clinica.repository.IServiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@org.springframework.stereotype.Service
 @RequiredArgsConstructor
-public class IndividualServiceService implements IIndividualServiceService {
+public class ServiceService implements IServiceService {
 
-    private final IIndividualServiceRepository individualServiceRepository;
+    private final IServiceRepository serviceRepository;
+    private final IPackageRepository packageRepository;
 
     @Override
-    public IndividualServiceDTO save(IndividualServiceDTO individualServiceDTO) {
-        this.validateService(individualServiceDTO);
-        var individualService = this.dtoToEntity(individualServiceDTO);
-        var savedIndividualService = this.individualServiceRepository.save(individualService);
-        return entityToDto(savedIndividualService);
+    public ServiceDTO save(ServiceDTO serviceDTO) {
+        this.validateService(serviceDTO);
+        var individualService = ServiceDTO.toEntity(serviceDTO);
+        var savedIndividualService = this.serviceRepository.save(individualService);
+        return ServiceDTO.from(savedIndividualService);
     }
 
     @Override
-    public List<IndividualServiceDTO> findAll(Pageable pageable) {
-        var individualServices =  individualServiceRepository.findAll(pageable);
-        List<IndividualServiceDTO> individualServiceDTOS = new ArrayList<>();
-        for (IndividualService individualService : individualServices) {
-            individualServiceDTOS.add(entityToDto(individualService));
+    public List<ServiceDTO> findAll(Pageable pageable) {
+        var services =  serviceRepository.findAll(pageable);
+        List<ServiceDTO> serviceDTOS = new ArrayList<>();
+        for (Service service : services) {
+            serviceDTOS.add(ServiceDTO.from(service));
         }
-        return individualServiceDTOS;
+        return serviceDTOS;
     }
 
     @Override
-    public IndividualServiceDTO findById(Long id) {
-        var individualService = individualServiceRepository.findById(id).orElseThrow(
+    public ServiceDTO findById(Long id) {
+        var service = serviceRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Service not found with id: " + id)
         );
-        return entityToDto(individualService);
+        return ServiceDTO.from(service);
     }
 
     @Override
     public void delete(Long id) {
-        if(!individualServiceRepository.existsById(id)){
-            throw new ResourceNotFoundException("Service with id " + id + " not found");
+        Service service = serviceRepository.findById(id).orElseThrow(
+                () ->  new ResourceNotFoundException("Service with id " + id + " not found")
+        );
+        // Recorro todos los paquetes que contienen el servicio
+        List<com.hackacode.clinica.model.Package> packages = packageRepository.findByServicesContaining(service);
+        for (Package pkg : packages) {
+            pkg.getServices().remove(service);
+            packageRepository.save(pkg);  // Guardo el update
         }
-        individualServiceRepository.deleteById(id);
+        serviceRepository.deleteById(id);
     }
 
     @Override
     public boolean existsById(Long id) {
-        return individualServiceRepository.existsById(id);
+        return serviceRepository.existsById(id);
     }
 
-    @Override
-    public IndividualServiceDTO entityToDto(IndividualService entity){
-        return IndividualServiceDTO.builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .description(entity.getDescription())
-                .serviceCode(entity.getServiceCode())
-                .price(entity.getPrice())
-                .build();
-    }
 
-    private IndividualService dtoToEntity(IndividualServiceDTO dto){
-        return IndividualService.builder()
-                .name(dto.getName())
-                .price(dto.getPrice())
-                .serviceCode(dto.getServiceCode())
-                .description(dto.getDescription())
-                .build();
-    }
-
-    private void validateService(IndividualServiceDTO dto){
-        if(individualServiceRepository.existsByServiceCode(dto.getServiceCode())){
+    private void validateService(ServiceDTO dto){
+        if(serviceRepository.existsByServiceCode(dto.getServiceCode())){
             throw new IllegalArgumentException("Service code is already in use");
         }
     }

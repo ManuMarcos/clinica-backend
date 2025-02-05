@@ -7,29 +7,40 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
 @Builder
-@JsonPropertyOrder({"id","name", "package_code","services"})
+@JsonPropertyOrder({"id", "package_code","services", "discounts", "base_price", "final_price"})
 public class PackageDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
-
-    @NotNull(message = "The name cannot be null")
-    @NotBlank(message = "The name cannot be empty")
-    private String name;
 
     @JsonProperty("package_code")
     @NotNull(message = "The package_code cannot be null")
     @NotBlank(message = "The package_code cannot be empty")
     private String packageCode;
 
+    @JsonProperty(value = "base_price",access = JsonProperty.Access.READ_ONLY)
+    private BigDecimal basePrice;
+
+    @JsonProperty(value = "final_price",access = JsonProperty.Access.READ_ONLY)
+    private BigDecimal finalPrice;
+
+    @JsonProperty(value = "discounts",access = JsonProperty.Access.READ_ONLY)
+    private List<DiscountDTO> discounts;
+
     @JsonProperty(value = "services",access = JsonProperty.Access.READ_ONLY)
-    private List<IndividualServiceDTO> individualServices;
+    private List<ServiceDTO> services;
 
     @NotNull(message = "The services_ids cannot be null")
-    @JsonProperty(value = "individual_services_ids",access = JsonProperty.Access.WRITE_ONLY)
-    private List<Integer> individualServicesIds;
+    @JsonProperty(value = "services_id",access = JsonProperty.Access.WRITE_ONLY)
+    private List<Integer> servicesId;
+
+    public void addDiscount(DiscountDTO discountDTO) {
+        this.discounts.add(discountDTO);
+    }
+
 }

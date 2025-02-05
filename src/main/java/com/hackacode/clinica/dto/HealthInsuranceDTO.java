@@ -23,12 +23,4 @@ public class HealthInsuranceDTO {
     @NotBlank(message = "The number of the Health Insurance cannot be empty")
     private String number;
 
-    public static HealthInsuranceDTO from(HealthInsurance healthInsurance) {
-        return HealthInsuranceDTO.builder()
-                .name(healthInsurance.getName())
-                .number(healthInsurance.getNumber())
-                .plan(healthInsurance.getPlan())
-                .build();
-    }
-
 }

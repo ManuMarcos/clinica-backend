@@ -1,5 +1,7 @@
 package com.hackacode.clinica.service;
 
+import com.hackacode.clinica.dto.RegisterRequestDTO;
+import com.hackacode.clinica.dto.UserDTO;
 import com.hackacode.clinica.dto.UserResponseDTO;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
 import com.hackacode.clinica.model.User;
@@ -54,13 +56,13 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean existsByDni(String dni) {
-        return userRepository.existsByDni(dni);
-    }
-
-    @Override
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
+    public void validateUniqueConstraints(UserDTO userDTO) {
+        if(userRepository.existsByDni(userDTO.getDni())){
+            throw new IllegalArgumentException("Dni is already in use");
+        }
+        if(userRepository.existsByEmail(userDTO.getEmail())){
+            throw new IllegalArgumentException("Email is already in use");
+        }
     }
 
     private User getById(Long id) {
@@ -68,5 +70,6 @@ public class UserService implements IUserService {
                 new ResourceNotFoundException("User with id " + id + " does not exist")
         );
     }
+
 
 }
