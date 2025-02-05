@@ -22,6 +22,11 @@ public class UserService implements IUserService {
     private final IUserRepository userRepository;
 
     @Override
+    public UserDTO save(UserDTO userDTO) {
+        return null;
+    }
+
+    @Override
     public Page<UserResponseDTO> findAll(Pageable pageable) {
         var users = userRepository.findAll(pageable);
         List<UserResponseDTO> usersDTO = new ArrayList<>();

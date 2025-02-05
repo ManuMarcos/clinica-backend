@@ -6,11 +6,8 @@ import com.hackacode.clinica.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-
-import java.util.List;
-
 public interface IUserService {
-
+    UserDTO save(UserDTO userDTO);
     Page<UserResponseDTO> findAll(Pageable pageable);
     UserResponseDTO findById(Long id);
     void validateUniqueConstraints(UserDTO userDTO);

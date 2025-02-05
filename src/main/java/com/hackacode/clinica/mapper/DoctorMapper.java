@@ -6,6 +6,8 @@ import com.hackacode.clinica.model.Doctor;
 import com.hackacode.clinica.model.Speciality;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class DoctorMapper {
 
@@ -17,9 +19,11 @@ public class DoctorMapper {
                 .surname(doctor.getSurname())
                 .email(doctor.getEmail())
                 .salary(doctor.getSalary())
-                .speciality(doctor.getSpeciality().getName())
+                .role(doctor.getRole())
+                .speciality(doctor.getSpeciality() != null ? doctor.getSpeciality().getName() : null)
                 .birthDate(doctor.getBirthDate())
-                .workingHours(doctor.getWorkingHours().stream().map(
+                .workingHours(doctor.getWorkingHours() == null ? null :
+                        doctor.getWorkingHours().stream().map(
                         WorkingHourDTO::from
                 ).toList())
                 .build();
@@ -33,6 +37,7 @@ public class DoctorMapper {
                 .email(doctorDTO.getEmail())
                 .password(doctorDTO.getPassword())
                 .birthDate(doctorDTO.getBirthDate())
+                .speciality(speciality)
                 .salary(doctorDTO.getSalary())
                 .build();
     }

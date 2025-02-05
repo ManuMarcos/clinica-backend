@@ -13,7 +13,7 @@ import java.util.List;
 public class Doctor extends User {
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "speciality_id")
+    @JoinColumn(name = "speciality_id", nullable = false)
     private Speciality speciality;
 
     @Column(precision = 10, scale = 2)

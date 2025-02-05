@@ -1,15 +1,15 @@
 package com.hackacode.clinica.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.hackacode.clinica.model.Role;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
-@SuperBuilder
+@Builder
 @Data
 public class UserDTO {
 
@@ -30,7 +30,6 @@ public class UserDTO {
     @JsonProperty("birth_date")
     private LocalDate birthDate;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Role role;
 
 }

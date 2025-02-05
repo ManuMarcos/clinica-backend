@@ -1,6 +1,7 @@
 package com.hackacode.clinica.service;
 
 import com.hackacode.clinica.dto.DoctorDTO;
+import com.hackacode.clinica.dto.UserDTO;
 import com.hackacode.clinica.dto.WorkingHourDTO;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
 import com.hackacode.clinica.mapper.DoctorMapper;
@@ -28,11 +29,16 @@ public class DoctorService implements IDoctorService {
     private final PasswordEncoder passwordEncoder;
     private final ISpecialityRepository specialityRepository;
     private final DoctorMapper doctorMapper;
-    private final UserService userService;
+    private final IUserService userService;
 
     @Override
     public DoctorDTO save(DoctorDTO doctorDTO) {
-        userService.validateUniqueConstraints(doctorDTO);
+        //TODO: To refactor
+        userService.validateUniqueConstraints(UserDTO.builder()
+                .email(doctorDTO.getEmail())
+                .dni(doctorDTO.getDni())
+                .build()
+        );
         if (doctorDTO.getSpecialityId() == null) {
             throw new IllegalArgumentException("Doctors must have speciality");
         }
