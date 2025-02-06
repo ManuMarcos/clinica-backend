@@ -12,21 +12,26 @@ import com.hackacode.clinica.repository.IDoctorRepository;
 import com.hackacode.clinica.repository.IPatientRepository;
 import com.hackacode.clinica.repository.ISpecialityRepository;
 import com.hackacode.clinica.repository.IUserRepository;
+import io.jsonwebtoken.Jwt;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+
 public class AuthService {
 
     private final IUserRepository userRepository;
@@ -39,19 +44,14 @@ public class AuthService {
     private final UserService userService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+
     public TokenResponseDTO login(LoginRequestDTO loginRequestDTO) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.email(), loginRequestDTO.password()));
-        UserDetails user = userRepository.findByEmail(loginRequestDTO.email()).orElse(null);
-        String token = jwtService.generateToken(user);
+        User user = userRepository.findByEmail(loginRequestDTO.email()).orElseThrow(
+                () -> new UsernameNotFoundException("User not found")
+        );
+        String token = jwtService.generateToken(user, user.getId());
         return new TokenResponseDTO(token);
-    }
-
-    public String getJwtToken() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getCredentials() instanceof String) {
-            return (String) authentication.getCredentials();
-        }
-        return null;
     }
 
     public boolean isPatient(){
@@ -77,6 +77,16 @@ public class AuthService {
             return ((UserDetails) authentication.getPrincipal()).getUsername();
         }
         return null;
+    }
+
+    public Long getCurrentUserId() {
+        return jwtService.getUserIdFromToken(jwtService.getTokenFromCurrentRequest());
+    }
+
+    public List<Role> getCurrentUserRoles() {
+        return jwtService.getRolesFromToken(jwtService.getTokenFromCurrentRequest()).stream().map(
+                Role::valueOf
+        ).toList();
     }
 
 

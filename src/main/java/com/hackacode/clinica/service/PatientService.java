@@ -44,10 +44,7 @@ public class PatientService implements IPatientService {
     @Override
     public Page<PatientDTO> findAll(Pageable pageable) {
         var patients = patientRepository.findAll(pageable);
-        List<PatientDTO> patientDTOS = new ArrayList<>();
-        for(var patient : patients) {
-            patientDTOS.add(patientMapper.toDTO(patient));
-        }
+        List<PatientDTO> patientDTOS = patients.stream().map(patientMapper::toDTO).toList();
         return new PageImpl<>(patientDTOS, pageable, patientDTOS.size());
     }
 

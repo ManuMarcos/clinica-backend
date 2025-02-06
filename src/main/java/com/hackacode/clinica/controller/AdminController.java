@@ -5,6 +5,7 @@ import com.hackacode.clinica.dto.AdminDTO;
 import com.hackacode.clinica.dto.PaginatedResponseDTO;
 import com.hackacode.clinica.model.Role;
 import com.hackacode.clinica.service.AdminService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Admins")
 @RequestMapping("/admins")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {

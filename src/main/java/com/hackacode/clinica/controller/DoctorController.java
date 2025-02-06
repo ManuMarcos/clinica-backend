@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.hackacode.clinica.dto.DoctorDTO;
 import com.hackacode.clinica.dto.PaginatedResponseDTO;
+import com.hackacode.clinica.dto.ServiceToDoctorRequestDTO;
 import com.hackacode.clinica.dto.WorkingHourDTO;
 import com.hackacode.clinica.service.IDoctorService;
 import com.hackacode.clinica.util.Views;
@@ -51,10 +52,10 @@ public class DoctorController {
     @PostMapping("/{doctorId}/working-hours")
     public ResponseEntity<Object> addWorkingHour(@PathVariable Long doctorId, @RequestBody WorkingHourDTO workingHourDTO) {
         doctorService.addWorkingHour(doctorId, workingHourDTO);
-        return new ResponseEntity<>("Working hour added successfully.", HttpStatus.CREATED);
+        return new ResponseEntity<>("Working hour added successfully.", HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
     @Operation(summary = "Delete a working hour from a doctor",
             description = "Removes a specific working hour by its ID.")
     @DeleteMapping("/{doctorId}/working-hours/{workingHourId}")
@@ -63,6 +64,18 @@ public class DoctorController {
         return new ResponseEntity<>("Working hour deleted successfully.", HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
+    @PostMapping("/{doctorId}/services")
+    public ResponseEntity<String> addServiceToDoctor(@PathVariable Long doctorId, @Valid @RequestBody ServiceToDoctorRequestDTO serviceToDoctorRequestDTO){
+        doctorService.addService(doctorId, serviceToDoctorRequestDTO);
+        return new ResponseEntity<>("Service added successfully.", HttpStatus.OK);
+    }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
+    @DeleteMapping("/{doctorId}/services/{serviceId}")
+    public ResponseEntity<String> removeServiceFromDoctor(@PathVariable Long doctorId, @PathVariable Long serviceId) {
+        doctorService.removeService(doctorId,serviceId);
+        return new ResponseEntity<>("Service removed successfully.", HttpStatus.OK);
+    }
 
 }

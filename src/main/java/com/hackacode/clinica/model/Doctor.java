@@ -12,12 +12,14 @@ import java.util.List;
 @SuperBuilder
 public class Doctor extends User {
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "speciality_id", nullable = false)
     private Speciality speciality;
 
     @Column(precision = 10, scale = 2)
     private BigDecimal salary;
+
+    private int appointmentDuration = 30;
 
     @ManyToMany
     @JoinTable(
@@ -38,8 +40,19 @@ public class Doctor extends User {
         workingHour.setDoctor(this);
     }
 
-    public void removeWorkingHour(WorkingHour workingHour) {
-        this.workingHours.remove(workingHour);
-        workingHour.setDoctor(null);
+    public boolean removeWorkingHour(WorkingHour workingHour) {
+        if(this.workingHours.removeIf(wh -> wh.getWorkingHourId().equals(workingHour.getWorkingHourId()))){
+            workingHour.setDoctor(null);
+            return true;
+        };
+        return false;
+    }
+
+    public void addService(Service service) {
+        this.services.add(service);
+    }
+
+    public boolean removeService(Service service) {
+        return this.services.removeIf(s -> s.getId().equals(service.getId()));
     }
 }

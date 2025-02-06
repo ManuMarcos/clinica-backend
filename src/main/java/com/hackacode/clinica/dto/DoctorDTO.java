@@ -47,4 +47,7 @@ public class DoctorDTO {
     @JsonProperty(value ="speciality_id", access = JsonProperty.Access.WRITE_ONLY)
     private Long specialityId;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<ServiceDTO> services;
+
 }

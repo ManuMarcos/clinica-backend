@@ -5,9 +5,14 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -23,8 +28,8 @@ public class JwtService {
     private static final Long JWT_EXPIRATION = 86400000L; //24 horas
     private static final Long REFRESH_EXPIRATION = 604800000L;
 
-    public String generateToken(UserDetails usuario){
-        return this.buildToken(new HashMap<>(), usuario, JWT_EXPIRATION);
+    public String generateToken(UserDetails usuario, Long userId){
+        return this.buildToken(new HashMap<>(), usuario, JWT_EXPIRATION, userId);
     }
 
     public String generateRefreshToken(User user){
@@ -32,12 +37,12 @@ public class JwtService {
     }
 
 
-    private String buildToken(Map<String, Object> extraClaims, UserDetails usuario, Long expiracion){
+    private String buildToken(Map<String, Object> extraClaims, UserDetails usuario, Long expiracion, Long userId){
         List<String> roles = usuario.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)  // Extrae los roles
                 .toList();
         extraClaims.put("roles", roles);
-
+        extraClaims.put("userId", userId);
         return Jwts.builder()
                 .claims(extraClaims)
                 .subject(usuario.getUsername())
@@ -54,6 +59,11 @@ public class JwtService {
 
     public String getUsernameFromToken(String token) {
         return getClaim(token, Claims::getSubject);
+    }
+
+    public Long getUserIdFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims.get("userId", Long.class);
     }
 
     public List<String> getRolesFromToken(String token) {
@@ -85,5 +95,22 @@ public class JwtService {
 
     private boolean isTokenExpired(String token){
         return getExpiration(token).before(new Date());
+    }
+
+    private String extractToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return null;
+        }
+        return authHeader.substring(7);
+    }
+
+    public String getTokenFromCurrentRequest() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes == null) {
+            return null;
+        }
+        HttpServletRequest request = attributes.getRequest();
+        return extractToken(request);
     }
 }
