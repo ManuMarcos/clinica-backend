@@ -1,5 +1,6 @@
 package com.hackacode.clinica.service;
 
+import com.hackacode.clinica.dto.DoctorAvailabilityDTO;
 import com.hackacode.clinica.dto.ServiceDTO;
 import org.springframework.data.domain.Pageable;
 

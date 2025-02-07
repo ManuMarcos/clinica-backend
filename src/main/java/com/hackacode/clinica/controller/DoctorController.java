@@ -78,4 +78,5 @@ public class DoctorController {
         return new ResponseEntity<>("Service removed successfully.", HttpStatus.OK);
     }
 
+
 }

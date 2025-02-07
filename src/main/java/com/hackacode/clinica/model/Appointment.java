@@ -34,6 +34,6 @@ public class Appointment {
     @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
     private Consultation consultation;
 
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     private Service service;
 }

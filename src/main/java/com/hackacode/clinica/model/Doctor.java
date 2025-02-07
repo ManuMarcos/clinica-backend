@@ -1,5 +1,6 @@
 package com.hackacode.clinica.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -12,14 +13,15 @@ import java.util.List;
 @SuperBuilder
 public class Doctor extends User {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "speciality_id", nullable = false)
     private Speciality speciality;
 
     @Column(precision = 10, scale = 2)
     private BigDecimal salary;
 
-    private int appointmentDuration = 30;
+    @Column(nullable = false)
+    private Integer appointmentDuration = 30;
 
     @ManyToMany
     @JoinTable(
@@ -30,9 +32,12 @@ public class Doctor extends User {
     private List<Service> services;
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<WorkingHour> workingHours;
 
+
     @OneToMany(mappedBy = "doctor",cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Appointment> appointments;
 
     public void addWorkingHour(WorkingHour workingHour) {
@@ -54,5 +59,13 @@ public class Doctor extends User {
 
     public boolean removeService(Service service) {
         return this.services.removeIf(s -> s.getId().equals(service.getId()));
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void setDefaultValues() {
+        if (appointmentDuration == null) {
+            appointmentDuration = 30; // Valor por defecto
+        }
     }
 }

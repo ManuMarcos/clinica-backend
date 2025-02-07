@@ -25,5 +25,5 @@ public interface IDoctorRepository extends JpaRepository<Doctor, Long> {
                                       @Param("serviceId") Long serviceId,
                                       @Param("startTime") LocalDateTime startTime,
                                       @Param("endTime") LocalDateTime endTime);
-
+    List<Doctor> findByServices_id(Long serviceId);
 }

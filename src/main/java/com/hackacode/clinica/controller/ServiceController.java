@@ -1,5 +1,6 @@
 package com.hackacode.clinica.controller;
 
+import com.hackacode.clinica.dto.DoctorAvailabilityDTO;
 import com.hackacode.clinica.dto.ServiceDTO;
 import com.hackacode.clinica.service.IServiceService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,4 +42,6 @@ public class ServiceController {
         serviceService.delete(serviceId);
         return ResponseEntity.ok("Service deleted successfully.");
     }
+
+
 }
