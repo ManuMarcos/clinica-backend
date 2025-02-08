@@ -1,5 +1,6 @@
 package com.hackacode.clinica.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +15,12 @@ public class AppointmentRequestDTO {
 
     private LocalDate date;
     private LocalTime time;
+    @JsonProperty("service_id")
     private Long serviceId;
+
+    @JsonProperty("patient_id")
     private Long patientId;
+
+    @JsonProperty("doctor_id")
     private Long doctorId;
 }

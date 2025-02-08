@@ -2,11 +2,15 @@ package com.hackacode.clinica.service;
 
 import com.hackacode.clinica.dto.*;
 import com.hackacode.clinica.exception.BadRequestException;
+import com.hackacode.clinica.exception.ConflictException;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
+import com.hackacode.clinica.mapper.AppointmentMapper;
 import com.hackacode.clinica.model.*;
 import com.hackacode.clinica.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -26,10 +30,17 @@ public class AppointmentService implements IAppointmentService {
     private final IServiceRepository serviceRepository;
     private final IPatientRepository patientRepository;
     private final IDoctorRepository doctorRepository;
+    private final AppointmentMapper appointmentMapper;
 
 
     @Override
+    public Page<AppointmentResponseDTO> findAll(Pageable pageable) {
+        return appointmentRepository.findAll(pageable).map(appointmentMapper::toDTO);
+    }
+
+    @Override
     public AppointmentResponseDTO save(AppointmentRequestDTO appointmentRequestDTO) {
+        LocalDateTime startTime = appointmentRequestDTO.getDate().atTime(appointmentRequestDTO.getTime());
         var service = serviceRepository.findById(appointmentRequestDTO.getServiceId()).orElseThrow(
                 () -> new ResourceNotFoundException("Service with id: " + appointmentRequestDTO.getServiceId()
                         + "not found!"));
@@ -39,21 +50,28 @@ public class AppointmentService implements IAppointmentService {
         var doctor = doctorRepository.findById(appointmentRequestDTO.getDoctorId()).orElseThrow(
                 () -> new ResourceNotFoundException("Doctor with id: " + appointmentRequestDTO.getDoctorId()
                     + "not found!"));
-
-        LocalDateTime startTime = appointmentRequestDTO.getDate().atTime(appointmentRequestDTO.getTime());
+        if(!ifDoctorProvidesService(doctor, service)) {
+            throw new BadRequestException("The doctor with id: " + doctor.getId()
+                + "does not provide the service with id: " + service.getId());
+        }
+        if(!ifDoctorWorksThisDayAtTime(doctor, startTime)){
+            throw new BadRequestException("The doctor with id: " + doctor.getId()
+                + "does not work this day at time:" + startTime);
+        }
         LocalDateTime endTime = startTime.plusMinutes(doctor.getAppointmentDuration());
-        //var availableDoctors = doctorService.findAvailableDoctors(startTime, endTime, service.getId());
-        //var randomDoctor = availableDoctors.get(new Random().nextInt(availableDoctors.size()));
+        if(appointmentRepository.existsBookedAppointment(doctor.getId(), startTime, endTime)){
+            throw new ConflictException("The appointment is already booked!");
+        };
 
-        //Create de Appointment
-        var appointment = Appointment.builder()
+        var savedAppointment = appointmentRepository.save(Appointment.builder()
+                .service(service)
                 .doctor(doctor)
                 .patient(patient)
-                .service(service)
+                .status(AppointmentStatus.BOOKED)
                 .startTime(startTime)
                 .endTime(endTime)
-                .build();
-        return null;
+                .build());
+        return appointmentMapper.toDTO(savedAppointment);
     }
 
     @Override
@@ -71,8 +89,21 @@ public class AppointmentService implements IAppointmentService {
     }
 
     @Override
-    public AppointmentResponseDTO update(AppointmentRequestDTO appointmentRequestDTO) {
-        return null;
+    public void deleteById(Long id) {
+        if(!appointmentRepository.existsById(id)) {
+            this.getById(id);
+        }
+        appointmentRepository.deleteById(id);
+    }
+
+    @Override
+    public AppointmentResponseDTO update(Long appoitmentId, AppointmentUpdateDTO appointmentUpdateDTO) {
+        Appointment appointment = this.getById(appoitmentId);
+        if(appointmentUpdateDTO.getStatus() != null){
+            appointment.setStatus(appointmentUpdateDTO.getStatus());
+        }
+        appointmentRepository.save(appointment);
+        return appointmentMapper.toDTO(appointment);
     }
 
     @Override
@@ -127,9 +158,28 @@ public class AppointmentService implements IAppointmentService {
                 .toList();
     }
 
+
+    private boolean ifDoctorProvidesService(Doctor doctor, com.hackacode.clinica.model.Service service) {
+        return doctor.getServices().stream().anyMatch(s -> s.getId().equals(service.getId()));
+    }
+
     private boolean ifDoctorWorksThisDay(Doctor doctor, DayOfWeek dayOfWeek) {
         return doctor.getWorkingHours().stream().anyMatch(wh -> wh.getDayOfWeek().equals(dayOfWeek));
     }
+
+    private Appointment getById(Long id) {
+        return appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment with id: " + id + " not found!"));
+    }
+
+    private boolean ifDoctorWorksThisDayAtTime(Doctor doctor, LocalDateTime dateTime) {
+        return doctor.getWorkingHours().stream().anyMatch(
+                wh -> ((wh.getDayOfWeek().equals(dateTime.getDayOfWeek())
+                    && !dateTime.toLocalTime().isBefore(wh.getTimeFrom())
+                    && !dateTime.toLocalTime().isAfter(wh.getTimeTo()))));
+    }
+
+
 
 
 

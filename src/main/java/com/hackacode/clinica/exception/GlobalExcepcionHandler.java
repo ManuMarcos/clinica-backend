@@ -72,6 +72,11 @@ public class GlobalExcepcionHandler {
         return this.buildResponseError(ex, request, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<Object> handleConflictException(ConflictException ex, WebRequest request) {
+        return this.buildResponseError(ex, request, HttpStatus.CONFLICT);
+    }
+
     private ResponseEntity<Object> buildResponseError(Exception ex, WebRequest request, HttpStatus status) {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("timestamp", Instant.now());

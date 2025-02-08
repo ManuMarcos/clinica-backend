@@ -21,4 +21,15 @@ public interface IAppointmentRepository extends JpaRepository<Appointment, Long>
             @Param("status") AppointmentStatus status,
             @Param("date") LocalDate date,
             @Param("doctorId") Long doctorId);
+
+
+    @Query("SELECT COUNT(a) > 0 FROM Appointment a " +
+            "WHERE a.doctor.id = :doctorId " +
+            "AND a.status = 'BOOKED' " +
+            "AND (:startTime < a.endTime " +  // Solo revisamos solapamientos
+            "AND :endTime > a.startTime)")
+    boolean existsBookedAppointment(
+            @Param("doctorId") Long doctorId,
+            @Param("startTime") LocalDateTime startTime,
+            @Param("endTime") LocalDateTime endTime);
 }
