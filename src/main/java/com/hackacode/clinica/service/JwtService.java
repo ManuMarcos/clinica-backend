@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +25,8 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    private static final String SECRET_KEY = "mySecretKey432429842394892848929834832489829843293983429832";
+    @Value("${JWT_SECRET}")
+    private String SECRET_KEY;
     private static final Long JWT_EXPIRATION = 86400000L; //24 horas
     private static final Long REFRESH_EXPIRATION = 604800000L;
 
