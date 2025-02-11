@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +30,11 @@ public class JwtService {
     private String SECRET_KEY;
     private static final Long JWT_EXPIRATION = 86400000L; //24 horas
     private static final Long REFRESH_EXPIRATION = 604800000L;
+
+    @PostConstruct
+    public void logEnvVariables() {
+        System.out.println("SECRET_KEY en JwtService: " + this.SECRET_KEY);
+    }
 
     public String generateToken(UserDetails usuario, Long userId){
         return this.buildToken(new HashMap<>(), usuario, JWT_EXPIRATION, userId);
