@@ -45,6 +45,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true )
+    private List<RefreshToken> refreshTokens;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

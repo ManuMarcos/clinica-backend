@@ -1,5 +1,6 @@
 package com.hackacode.clinica.service;
 
+import com.hackacode.clinica.model.RefreshToken;
 import com.hackacode.clinica.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -17,19 +18,17 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
 public class JwtService {
 
     @Value("${JWT_SECRET}")
-    private String SECRET_KEY;
-    private static final Long JWT_EXPIRATION = 86400000L; //24 horas
-    private static final Long REFRESH_EXPIRATION = 604800000L;
+    private String SECRET_KEY; //86400000L;
+    private static final Long JWT_EXPIRATION =  60000L; //86400000L; //24 hours
+    private static final Long REFRESH_TOKEN_EXPIRATION = 120000L;  //2592000000L; //30 days
 
     @PostConstruct
     public void logEnvVariables() {
@@ -40,10 +39,9 @@ public class JwtService {
         return this.buildToken(new HashMap<>(), usuario, JWT_EXPIRATION, userId);
     }
 
-    public String generateRefreshToken(User user){
-        return "";
+    public String generateRefreshToken(UserDetails usuario, Long userId){
+        return this.buildToken(new HashMap<>(), usuario, REFRESH_TOKEN_EXPIRATION, userId);
     }
-
 
     private String buildToken(Map<String, Object> extraClaims, UserDetails usuario, Long expiracion, Long userId){
         List<String> roles = usuario.getAuthorities().stream()
@@ -53,6 +51,7 @@ public class JwtService {
         extraClaims.put("userId", userId);
         return Jwts.builder()
                 .claims(extraClaims)
+                .id(UUID.randomUUID().toString())
                 .subject(usuario.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiracion))

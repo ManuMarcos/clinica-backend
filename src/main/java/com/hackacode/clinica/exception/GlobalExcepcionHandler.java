@@ -1,5 +1,6 @@
 package com.hackacode.clinica.exception;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,6 +77,14 @@ public class GlobalExcepcionHandler {
     public ResponseEntity<Object> handleConflictException(ConflictException ex, WebRequest request) {
         return this.buildResponseError(ex, request, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<Map<String, String>> handleExpiredJwtException(ExpiredJwtException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Token expirado, por favor inicie sesión nuevamente.");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
 
     private ResponseEntity<Object> buildResponseError(Exception ex, WebRequest request, HttpStatus status) {
         Map<String, Object> response = new LinkedHashMap<>();
