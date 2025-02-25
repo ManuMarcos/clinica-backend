@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.connector.Response;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,6 +40,15 @@ public class DoctorController {
     @GetMapping
     public ResponseEntity<PaginatedResponseDTO<DoctorDTO>> findAll(Pageable pageable) {
         return ResponseEntity.ok(PaginatedResponseDTO.fromPage(doctorService.findAll(pageable)));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<PaginatedResponseDTO<DoctorDTO>> searchDoctors(
+            @RequestParam(required = false) String name,
+            @RequestParam(name = "speciality_id", required = false) Long specialityId,
+            @PageableDefault(size = 10, sort = "name") Pageable pageable
+    ){
+        return ResponseEntity.ok(PaginatedResponseDTO.fromPage(doctorService.search(name, specialityId, pageable)));
     }
 
     @GetMapping("/{doctorId}")

@@ -72,9 +72,9 @@ public class AuthService {
         String newAccessToken = jwtService.generateToken(user, user.getId());
         return AccessTokenDTO.builder()
                 .accessToken(newAccessToken)
+                .user(userMapper.toDTO(user))
                 .build();
     }
-
 
 
 

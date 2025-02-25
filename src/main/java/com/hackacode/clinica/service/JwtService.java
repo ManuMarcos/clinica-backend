@@ -26,9 +26,9 @@ import java.util.function.Function;
 public class JwtService {
 
     @Value("${JWT_SECRET}")
-    private String SECRET_KEY; //86400000L;
-    private static final Long JWT_EXPIRATION =  60000L; //86400000L; //24 hours
-    private static final Long REFRESH_TOKEN_EXPIRATION = 120000L;  //2592000000L; //30 days
+    private String SECRET_KEY; 
+    private static final Long JWT_EXPIRATION =  86400000L; //24 hours
+    private static final Long REFRESH_TOKEN_EXPIRATION = 2592000000L; //30 days
 
     @PostConstruct
     public void logEnvVariables() {

@@ -1,6 +1,9 @@
 package com.hackacode.clinica.repository;
 
 import com.hackacode.clinica.model.Doctor;
+import com.hackacode.clinica.model.Speciality;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +29,9 @@ public interface IDoctorRepository extends JpaRepository<Doctor, Long> {
                                       @Param("startTime") LocalDateTime startTime,
                                       @Param("endTime") LocalDateTime endTime);
     List<Doctor> findByServices_id(Long serviceId);
+    Page<Doctor> findBySpeciality_specialityId(Long specialityId, Pageable pageable);
+    Page<Doctor> findByNameContaining(String name, Pageable pageable);
+    Page<Doctor> findBySpeciality_specialityIdAndNameContaining(Long speciality_specialityId, String name, Pageable pageable);
+    Page<Doctor> findByNameContainingIgnoreCaseOrSpeciality_specialityId(String name, Long specialityId, Pageable pageable);
+    boolean existsBySpeciality_specialityId(Long specialityId);
 }

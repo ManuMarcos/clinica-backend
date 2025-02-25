@@ -82,6 +82,7 @@ public class AppointmentService implements IAppointmentService {
             doctorAvailabilityDTOS.add(DoctorAvailabilityDTO.builder()
                     .doctorId(doctor.getId())
                     .doctorName(doctor.getName() + " " + doctor.getSurname())
+                    .doctorSpeciality(doctor.getSpeciality().getName())
                     .availableSlots(getAvailableTimesForDoctor(doctor, from, to))
                     .build());
         }

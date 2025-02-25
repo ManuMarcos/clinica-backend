@@ -1,10 +1,13 @@
 package com.hackacode.clinica.controller;
 
+import com.hackacode.clinica.dto.PaginatedResponseDTO;
 import com.hackacode.clinica.dto.SpecialityRequestDTO;
 import com.hackacode.clinica.dto.SpecialityResponseDTO;
 import com.hackacode.clinica.service.ISpecialityService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -22,14 +25,14 @@ public class SpecialityController {
 
     @Secured("ROLE_ADMIN")
     @PostMapping
-    public ResponseEntity<SpecialityResponseDTO> create(@RequestBody SpecialityRequestDTO specialityRequestDTO) {
+    public ResponseEntity<SpecialityResponseDTO> create(@RequestBody @Valid SpecialityRequestDTO specialityRequestDTO) {
         SpecialityResponseDTO specialityResponseDTO = specialityService.save(specialityRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(specialityResponseDTO);
     }
 
     @GetMapping
-    public ResponseEntity<List<SpecialityResponseDTO>> getAll(){
-        return ResponseEntity.ok(specialityService.findAll());
+    public ResponseEntity<PaginatedResponseDTO<SpecialityResponseDTO>> getAll(Pageable pageable) {
+        return ResponseEntity.ok(PaginatedResponseDTO.fromPage(specialityService.findAll(pageable)));
     }
 
     @GetMapping("/{specialityId}")

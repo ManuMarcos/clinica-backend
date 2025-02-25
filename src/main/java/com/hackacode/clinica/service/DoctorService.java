@@ -24,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.print.Doc;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,6 +117,24 @@ public class DoctorService implements IDoctorService {
             throw new ResourceNotFoundException("Service not found for this doctor");
         };
         doctorRepository.save(doctor);
+    }
+
+    @Override
+    public Page<DoctorDTO> search(String name, Long specialityId, Pageable pageable) {
+        Page<Doctor> doctors;
+        if(name != null && specialityId != null) {
+            doctors = doctorRepository.findBySpeciality_specialityIdAndNameContaining(specialityId, name, pageable);
+        }
+        else if(name != null){
+             doctors = doctorRepository.findByNameContaining(name, pageable);
+        }
+        else if(specialityId != null){
+            doctors = doctorRepository.findBySpeciality_specialityId(specialityId, pageable);
+        }
+        else{
+            doctors = doctorRepository.findAll(pageable);
+        }
+        return doctors.map(doctorMapper::toDTO);
     }
 
     @Override

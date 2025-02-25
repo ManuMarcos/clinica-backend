@@ -16,6 +16,9 @@ public class DoctorAvailabilityDTO {
     @JsonProperty("doctor_name")
     private String doctorName;
 
+    @JsonProperty("doctor_speciality")
+    private String doctorSpeciality;
+
     @JsonProperty("available_slots")
     private List<AvailableSlotDTO> availableSlots;
 }

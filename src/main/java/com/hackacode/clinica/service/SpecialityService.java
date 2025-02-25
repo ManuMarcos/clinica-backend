@@ -2,10 +2,15 @@ package com.hackacode.clinica.service;
 
 import com.hackacode.clinica.dto.SpecialityRequestDTO;
 import com.hackacode.clinica.dto.SpecialityResponseDTO;
+import com.hackacode.clinica.exception.BadRequestException;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
 import com.hackacode.clinica.model.Speciality;
+import com.hackacode.clinica.repository.IDoctorRepository;
 import com.hackacode.clinica.repository.ISpecialityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,6 +21,7 @@ import java.util.List;
 public class SpecialityService implements ISpecialityService {
 
     private final ISpecialityRepository specialityRepository;
+    private final IDoctorRepository doctorRepository;
 
     @Override
     public SpecialityResponseDTO save(SpecialityRequestDTO specialityRequestDTO) {
@@ -29,7 +35,7 @@ public class SpecialityService implements ISpecialityService {
     }
 
     @Override
-    public List<SpecialityResponseDTO> findAll() {
+    public Page<SpecialityResponseDTO> findAll(Pageable pageable) {
         var specialities = specialityRepository.findAll();
         var specialitiesDTO = new ArrayList<SpecialityResponseDTO>();
         for (Speciality speciality : specialities) {
@@ -38,7 +44,7 @@ public class SpecialityService implements ISpecialityService {
                     .name(speciality.getName())
                     .build());
         }
-        return specialitiesDTO;
+        return new PageImpl<>(specialitiesDTO, pageable, specialitiesDTO.size());
     }
 
     @Override
@@ -55,7 +61,10 @@ public class SpecialityService implements ISpecialityService {
 
     @Override
     public void delete(Long id) {
-        var speciality = this.getById(id);
+        if(doctorRepository.existsBySpeciality_specialityId(id)){
+            throw new BadRequestException("No se puede eliminar la especialidad porque existen doctores que " +
+                    "pertenecen a la misma");
+        }
         specialityRepository.deleteById(id);
     }
 

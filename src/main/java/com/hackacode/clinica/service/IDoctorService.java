@@ -22,4 +22,5 @@ public interface IDoctorService {
     List<Doctor> findAvailableDoctors(LocalDateTime start, LocalDateTime end, Long serviceId);
     void addService(Long doctorId, ServiceToDoctorRequestDTO serviceToDoctorRequestDTO);
     void removeService(Long doctorId, Long serviceId);
+    Page<DoctorDTO> search(String name, Long specialityId, Pageable pageable);
 }

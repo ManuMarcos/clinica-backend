@@ -10,4 +10,6 @@ import lombok.Setter;
 public class AccessTokenDTO {
     @JsonProperty("access_token")
     private String accessToken;
+
+    private UserResponseDTO user;
 }

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.hackacode</groupId>
 	<artifactId>clinica</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>clinica</name>
 	<description>Clinica Backend - Proyecto para la hackacode 3 </description>
 	<url/>
@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.28</version>
+			<version>8.0.32</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
