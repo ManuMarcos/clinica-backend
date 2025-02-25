@@ -7,12 +7,12 @@ services:
     ports:
       - "8080:8080"
     environment:
-      DB_URL : clinica_db
-      DB_NAME: clinica?createDatabaseIfNotExist=true&serverTimezone=UTC
-      DB_USERNAME : root
-      DB_PASSWORD: medpointclinic123
-      DB_PORT: 3306
-      JWT_SECRET : mySecretKey432429842394892848929834832489829843293983429832
+      DB_URL : ${DB_URL}
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME : ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_PORT: ${DB_PORT}
+      JWT_SECRET : ${JWT_SECRET}
     restart: always
     depends_on:
       clinica_db:
