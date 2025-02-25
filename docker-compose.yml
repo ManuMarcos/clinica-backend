@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  clinica:
+    build: clinica
+    mem_limit: 512m
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL : clinica_db
+      DB_NAME: clinica?createDatabaseIfNotExist=true&serverTimezone=UTC
+      DB_USERNAME : root
+      DB_PASSWORD: medpointclinic123
+      DB_PORT: 3306
+      JWT_SECRET : mySecretKey432429842394892848929834832489829843293983429832
+    restart: always
+    depends_on:
+      clinica_db:
+        condition: service_healthy
+  clinica_db:
+    image: mysql:8.0.32
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: medpointclinic123
+      MYSQL_PASSWORD: medpointclinic123
+      MYSQL_DATABASE: clinica
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 10
