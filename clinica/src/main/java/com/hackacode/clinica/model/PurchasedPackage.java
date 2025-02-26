@@ -24,7 +24,7 @@ public class PurchasedPackage {
     @JoinColumn(name = "package_id", nullable = false)
     private Package medicalPackage;
 
-    private Date puchaseDate;
+    private Date purchaseDate;
 
     private PurchaseStatus status;
 

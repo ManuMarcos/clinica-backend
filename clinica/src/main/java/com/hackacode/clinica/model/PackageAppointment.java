@@ -19,6 +19,10 @@ public class PackageAppointment {
     private Appointment appointment;
 
     @ManyToOne
+    @JoinColumn(name = "service_id", nullable = false)
+    private Service service;
+
+    @ManyToOne
     @JoinColumn(name = "purchased_package_id", nullable = false)
     private PurchasedPackage purchasedPackage;
 }

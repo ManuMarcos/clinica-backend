@@ -1,14 +1,14 @@
 package com.hackacode.clinica.service;
 
-import com.hackacode.clinica.dto.DoctorDTO;
 import com.hackacode.clinica.dto.ServiceToDoctorRequestDTO;
-import com.hackacode.clinica.dto.UserDTO;
-import com.hackacode.clinica.dto.WorkingHourDTO;
+import com.hackacode.clinica.dto.doctor.DoctorRequestDTO;
+import com.hackacode.clinica.dto.doctor.DoctorResponseDTO;
+import com.hackacode.clinica.dto.user.UserDTO;
 import com.hackacode.clinica.exception.BadRequestException;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
 import com.hackacode.clinica.exception.UnauthorizedException;
-import com.hackacode.clinica.mapper.DoctorMapper;
-import com.hackacode.clinica.mapper.ServiceMapper;
+import com.hackacode.clinica.mapper.IDoctorMapper;
+import com.hackacode.clinica.mapper.IServiceMapper;
 import com.hackacode.clinica.model.Doctor;
 import com.hackacode.clinica.model.Role;
 import com.hackacode.clinica.model.Speciality;
@@ -24,9 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.print.Doc;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,13 +37,13 @@ public class DoctorService implements IDoctorService {
     private final AuthService authService;
     private final PasswordEncoder passwordEncoder;
     private final ISpecialityRepository specialityRepository;
-    private final DoctorMapper doctorMapper;
-    private final ServiceMapper serviceMapper;
+    private final IDoctorMapper doctorMapper;
+    private final IServiceMapper serviceMapper;
     private final IUserService userService;
     private final IServiceRepository serviceRepository;
 
     @Override
-    public DoctorDTO save(DoctorDTO doctorDTO) {
+    public DoctorResponseDTO save(DoctorRequestDTO doctorDTO) {
         //TODO: To refactor
         userService.validateUniqueConstraints(UserDTO.builder()
                 .email(doctorDTO.getEmail())
@@ -123,13 +121,13 @@ public class DoctorService implements IDoctorService {
     public Page<DoctorDTO> search(String name, Long specialityId, Pageable pageable) {
         Page<Doctor> doctors;
         if(name != null && specialityId != null) {
-            doctors = doctorRepository.findBySpeciality_specialityIdAndNameContaining(specialityId, name, pageable);
+            doctors = doctorRepository.findBySpecialityIdAndNameContaining(specialityId, name, pageable);
         }
         else if(name != null){
              doctors = doctorRepository.findByNameContaining(name, pageable);
         }
         else if(specialityId != null){
-            doctors = doctorRepository.findBySpeciality_specialityId(specialityId, pageable);
+            doctors = doctorRepository.findBySpecialityId(specialityId, pageable);
         }
         else{
             doctors = doctorRepository.findAll(pageable);

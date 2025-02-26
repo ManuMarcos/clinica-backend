@@ -1,7 +1,7 @@
 package com.hackacode.clinica.mapper;
 
 
-import com.hackacode.clinica.dto.UserResponseDTO;
+import com.hackacode.clinica.dto.user.UserResponseDTO;
 import com.hackacode.clinica.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -1,8 +1,8 @@
 package com.hackacode.clinica.controller;
 
-import com.hackacode.clinica.dto.AccessTokenDTO;
-import com.hackacode.clinica.dto.LoginRequestDTO;
-import com.hackacode.clinica.dto.LoginResponseDTO;
+import com.hackacode.clinica.dto.authentication.AccessTokenDTO;
+import com.hackacode.clinica.dto.authentication.LoginRequestDTO;
+import com.hackacode.clinica.dto.authentication.LoginResponseDTO;
 import com.hackacode.clinica.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

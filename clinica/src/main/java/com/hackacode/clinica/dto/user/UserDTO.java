@@ -1,11 +1,8 @@
-package com.hackacode.clinica.dto;
+package com.hackacode.clinica.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.hackacode.clinica.model.Role;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 

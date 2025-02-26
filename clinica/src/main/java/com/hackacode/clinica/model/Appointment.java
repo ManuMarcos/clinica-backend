@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 @Entity
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @Builder
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"start_time", "doctor_id","status"}))
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

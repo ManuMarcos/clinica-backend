@@ -26,12 +26,7 @@ public class Package {
             inverseJoinColumns = @JoinColumn(name = "service_id")
     )
     private List<Service> services = new ArrayList<>();
-
-
-    public Double calculatePrice() {
-        return 0.0;
-    }
-
+    
     public void addService(Service service) {
         this.services.add(service);
     }

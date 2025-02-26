@@ -1,22 +1,20 @@
 package com.hackacode.clinica.service;
 
 import com.hackacode.clinica.dto.DiscountDTO;
-import com.hackacode.clinica.dto.ServiceDTO;
-import com.hackacode.clinica.dto.PackageDTO;
+import com.hackacode.clinica.dto.service.ServiceResponseDTO;
+import com.hackacode.clinica.dto.servicePackage.PackageDTO;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
+import com.hackacode.clinica.mapper.IServiceMapper;
 import com.hackacode.clinica.model.Patient;
 import com.hackacode.clinica.model.Service;
 import com.hackacode.clinica.model.Package;
-import com.hackacode.clinica.model.User;
 import com.hackacode.clinica.repository.IPatientRepository;
 import com.hackacode.clinica.repository.IServiceRepository;
 import com.hackacode.clinica.repository.IPackageRepository;
-import com.hackacode.clinica.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +27,7 @@ public class PackageService implements IPackageService {
     private final IPatientRepository patientRepository;
     private final IServiceRepository ServiceRepository;
     private final AuthService authService;
+    private final IServiceMapper serviceMapper;
 
     @Override
     public PackageDTO save(PackageDTO packageDTO) {
@@ -98,11 +97,11 @@ public class PackageService implements IPackageService {
 
         BigDecimal basePrice = BigDecimal.ZERO;
 
-        List<ServiceDTO> serviceDTOS = new ArrayList<>();
+        List<ServiceResponseDTO> serviceDTOS = new ArrayList<>();
         List<DiscountDTO> discountDTOS = new ArrayList<>();
         for(Service service : servicePackage.getServices()){
             basePrice = basePrice.add(service.getPrice());
-            serviceDTOS.add(ServiceDTO.from(service));
+            serviceDTOS.add(serviceMapper.toResponseDTO(service));
         }
 
         //Aplica descuento del 15% por ser paquete

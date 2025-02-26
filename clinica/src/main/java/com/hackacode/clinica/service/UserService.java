@@ -1,8 +1,7 @@
 package com.hackacode.clinica.service;
 
-import com.hackacode.clinica.dto.RegisterRequestDTO;
-import com.hackacode.clinica.dto.UserDTO;
-import com.hackacode.clinica.dto.UserResponseDTO;
+import com.hackacode.clinica.dto.user.UserDTO;
+import com.hackacode.clinica.dto.user.UserResponseDTO;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
 import com.hackacode.clinica.model.User;
 import com.hackacode.clinica.repository.IUserRepository;

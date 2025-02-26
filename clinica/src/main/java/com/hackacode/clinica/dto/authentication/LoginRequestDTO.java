@@ -1,4 +1,4 @@
-package com.hackacode.clinica.dto;
+package com.hackacode.clinica.dto.authentication;
 
 public record LoginRequestDTO(
         String email,

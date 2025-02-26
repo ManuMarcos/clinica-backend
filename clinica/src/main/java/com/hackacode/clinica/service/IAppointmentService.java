@@ -1,8 +1,8 @@
 package com.hackacode.clinica.service;
 
-import com.hackacode.clinica.dto.AppointmentRequestDTO;
-import com.hackacode.clinica.dto.AppointmentResponseDTO;
-import com.hackacode.clinica.dto.AppointmentUpdateDTO;
+import com.hackacode.clinica.dto.appointment.AppointmentRequestDTO;
+import com.hackacode.clinica.dto.appointment.AppointmentResponseDTO;
+import com.hackacode.clinica.dto.appointment.AppointmentUpdateDTO;
 import com.hackacode.clinica.dto.DoctorAvailabilityDTO;
 import com.hackacode.clinica.model.Patient;
 import org.springframework.data.domain.Page;

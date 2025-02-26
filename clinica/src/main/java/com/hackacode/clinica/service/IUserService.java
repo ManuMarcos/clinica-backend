@@ -1,8 +1,7 @@
 package com.hackacode.clinica.service;
 
-import com.hackacode.clinica.dto.UserDTO;
-import com.hackacode.clinica.dto.UserResponseDTO;
-import com.hackacode.clinica.model.User;
+import com.hackacode.clinica.dto.user.UserDTO;
+import com.hackacode.clinica.dto.user.UserResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

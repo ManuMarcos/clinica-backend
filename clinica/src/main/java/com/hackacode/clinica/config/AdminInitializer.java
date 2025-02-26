@@ -1,5 +1,5 @@
 package com.hackacode.clinica.config;
-import com.hackacode.clinica.dto.AdminDTO;
+import com.hackacode.clinica.dto.admin.AdminDTO;
 import com.hackacode.clinica.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;

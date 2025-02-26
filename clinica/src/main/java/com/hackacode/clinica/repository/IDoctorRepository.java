@@ -1,7 +1,6 @@
 package com.hackacode.clinica.repository;
 
 import com.hackacode.clinica.model.Doctor;
-import com.hackacode.clinica.model.Speciality;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -29,9 +27,9 @@ public interface IDoctorRepository extends JpaRepository<Doctor, Long> {
                                       @Param("startTime") LocalDateTime startTime,
                                       @Param("endTime") LocalDateTime endTime);
     List<Doctor> findByServices_id(Long serviceId);
-    Page<Doctor> findBySpeciality_specialityId(Long specialityId, Pageable pageable);
+    Page<Doctor> findBySpecialityId(Long specialityId, Pageable pageable);
     Page<Doctor> findByNameContaining(String name, Pageable pageable);
-    Page<Doctor> findBySpeciality_specialityIdAndNameContaining(Long speciality_specialityId, String name, Pageable pageable);
-    Page<Doctor> findByNameContainingIgnoreCaseOrSpeciality_specialityId(String name, Long specialityId, Pageable pageable);
-    boolean existsBySpeciality_specialityId(Long specialityId);
+    Page<Doctor> findBySpecialityIdAndNameContaining(Long speciality_specialityId, String name, Pageable pageable);
+    Page<Doctor> findByNameContainingIgnoreCaseOrSpecialityId(String name, Long specialityId, Pageable pageable);
+    boolean existsBySpecialityId(Long specialityId);
 }

@@ -1,9 +1,8 @@
 package com.hackacode.clinica.controller;
 
 
-import com.hackacode.clinica.dto.AdminDTO;
+import com.hackacode.clinica.dto.admin.AdminDTO;
 import com.hackacode.clinica.dto.PaginatedResponseDTO;
-import com.hackacode.clinica.model.Role;
 import com.hackacode.clinica.service.AdminService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

@@ -1,4 +1,4 @@
-package com.hackacode.clinica.dto;
+package com.hackacode.clinica.dto.speciality;
 
 
 import jakarta.validation.constraints.NotBlank;
@@ -9,11 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class SpecialityRequestDTO {
-
     @NotNull(message = "The name cannot be null")
     @NotBlank(message = "The name cannot be empty")
     private String name;

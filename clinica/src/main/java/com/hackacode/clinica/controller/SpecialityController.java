@@ -1,8 +1,8 @@
 package com.hackacode.clinica.controller;
 
 import com.hackacode.clinica.dto.PaginatedResponseDTO;
-import com.hackacode.clinica.dto.SpecialityRequestDTO;
-import com.hackacode.clinica.dto.SpecialityResponseDTO;
+import com.hackacode.clinica.dto.speciality.SpecialityRequestDTO;
+import com.hackacode.clinica.dto.speciality.SpecialityResponseDTO;
 import com.hackacode.clinica.service.ISpecialityService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -12,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

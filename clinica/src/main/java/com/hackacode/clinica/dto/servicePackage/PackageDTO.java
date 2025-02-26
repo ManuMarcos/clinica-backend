@@ -1,7 +1,9 @@
-package com.hackacode.clinica.dto;
+package com.hackacode.clinica.dto.servicePackage;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.hackacode.clinica.dto.DiscountDTO;
+import com.hackacode.clinica.dto.service.ServiceResponseDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -33,7 +35,7 @@ public class PackageDTO {
     private List<DiscountDTO> discounts;
 
     @JsonProperty(value = "services",access = JsonProperty.Access.READ_ONLY)
-    private List<ServiceDTO> services;
+    private List<ServiceResponseDTO> services;
 
     @NotNull(message = "The services_ids cannot be null")
     @JsonProperty(value = "services_id",access = JsonProperty.Access.WRITE_ONLY)

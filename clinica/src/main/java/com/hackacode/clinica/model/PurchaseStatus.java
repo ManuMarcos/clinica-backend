@@ -1,5 +1,5 @@
 package com.hackacode.clinica.model;
 
 public enum PurchaseStatus {
-    IN_PROGRESS,COMPLETED
+    PENDING_ASSIGNMENT,IN_PROGRESS,COMPLETED
 }

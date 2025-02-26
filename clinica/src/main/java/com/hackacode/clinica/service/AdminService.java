@@ -1,9 +1,8 @@
 package com.hackacode.clinica.service;
 
-import com.hackacode.clinica.dto.AdminDTO;
-import com.hackacode.clinica.dto.UserDTO;
+import com.hackacode.clinica.dto.admin.AdminDTO;
+import com.hackacode.clinica.dto.user.UserDTO;
 import com.hackacode.clinica.mapper.AdminMapper;
-import com.hackacode.clinica.model.Admin;
 import com.hackacode.clinica.model.Role;
 import com.hackacode.clinica.repository.IAdminRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor

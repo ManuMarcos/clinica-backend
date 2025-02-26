@@ -1,6 +1,6 @@
 package com.hackacode.clinica.mapper;
 
-import com.hackacode.clinica.dto.AdminDTO;
+import com.hackacode.clinica.dto.admin.AdminDTO;
 import com.hackacode.clinica.model.Admin;
 import com.hackacode.clinica.model.Role;
 import lombok.RequiredArgsConstructor;

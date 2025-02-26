@@ -1,9 +1,8 @@
 package com.hackacode.clinica.service;
 
-import com.hackacode.clinica.dto.AccessTokenDTO;
-import com.hackacode.clinica.dto.LoginRequestDTO;
-import com.hackacode.clinica.dto.LoginResponseDTO;
-import com.hackacode.clinica.exception.BadRequestException;
+import com.hackacode.clinica.dto.authentication.AccessTokenDTO;
+import com.hackacode.clinica.dto.authentication.LoginRequestDTO;
+import com.hackacode.clinica.dto.authentication.LoginResponseDTO;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
 import com.hackacode.clinica.mapper.UserMapper;
 import com.hackacode.clinica.model.*;
@@ -11,7 +10,6 @@ import com.hackacode.clinica.repository.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

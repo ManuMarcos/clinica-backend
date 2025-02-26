@@ -1,5 +1,7 @@
-package com.hackacode.clinica.dto;
+package com.hackacode.clinica.dto.appointment;
 
+import com.hackacode.clinica.dto.patient.PatientResponseDTO;
+import com.hackacode.clinica.dto.service.ServiceResponseDTO;
 import com.hackacode.clinica.model.AppointmentStatus;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +15,6 @@ public class AppointmentResponseDTO {
     private LocalDateTime dateTime;
     private AppointmentStatus status;
     private DoctorBasicDTO doctor;
-    private PatientDTO patient;
-    private ServiceDTO service;
-
+    private PatientResponseDTO patient;
+    private ServiceResponseDTO service;
 }

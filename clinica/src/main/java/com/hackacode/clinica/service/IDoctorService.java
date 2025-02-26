@@ -1,8 +1,6 @@
 package com.hackacode.clinica.service;
 
-import com.hackacode.clinica.dto.DoctorDTO;
 import com.hackacode.clinica.dto.ServiceToDoctorRequestDTO;
-import com.hackacode.clinica.dto.WorkingHourDTO;
 import com.hackacode.clinica.model.Doctor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

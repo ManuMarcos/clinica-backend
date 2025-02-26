@@ -1,7 +1,8 @@
-package com.hackacode.clinica.dto;
+package com.hackacode.clinica.dto.authentication;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.hackacode.clinica.dto.healthInsurance.HealthInsuranceRequestDTO;
 import com.hackacode.clinica.model.Role;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -54,5 +55,5 @@ public class RegisterRequestDTO{
 
     @Valid
     @JsonProperty("health_insurance")
-    private HealthInsuranceDTO healthInsurance;
+    private HealthInsuranceRequestDTO healthInsurance;
 }

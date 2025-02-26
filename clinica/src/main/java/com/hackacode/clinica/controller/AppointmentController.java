@@ -1,7 +1,9 @@
 package com.hackacode.clinica.controller;
 
 import com.hackacode.clinica.dto.*;
-import com.hackacode.clinica.model.Appointment;
+import com.hackacode.clinica.dto.appointment.AppointmentRequestDTO;
+import com.hackacode.clinica.dto.appointment.AppointmentResponseDTO;
+import com.hackacode.clinica.dto.appointment.AppointmentUpdateDTO;
 import com.hackacode.clinica.service.AppointmentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

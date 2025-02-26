@@ -1,4 +1,4 @@
-package com.hackacode.clinica.dto;
+package com.hackacode.clinica.dto.appointment;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Builder
@@ -14,7 +13,9 @@ import java.time.LocalTime;
 public class AppointmentRequestDTO {
 
     private LocalDate date;
+
     private LocalTime time;
+
     @JsonProperty("service_id")
     private Long serviceId;
 

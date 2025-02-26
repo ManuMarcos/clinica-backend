@@ -1,27 +1,19 @@
 package com.hackacode.clinica.controller;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.hackacode.clinica.dto.DoctorDTO;
 import com.hackacode.clinica.dto.PaginatedResponseDTO;
 import com.hackacode.clinica.dto.ServiceToDoctorRequestDTO;
-import com.hackacode.clinica.dto.WorkingHourDTO;
 import com.hackacode.clinica.service.IDoctorService;
-import com.hackacode.clinica.util.Views;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.connector.Response;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import javax.print.Doc;
 
 @RestController
 @RequiredArgsConstructor

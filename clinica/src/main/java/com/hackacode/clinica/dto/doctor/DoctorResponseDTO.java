@@ -1,18 +1,19 @@
-package com.hackacode.clinica.dto;
+package com.hackacode.clinica.dto.doctor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.hackacode.clinica.dto.service.ServiceResponseDTO;
 import com.hackacode.clinica.model.Role;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
+import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
+@Data
 @Builder
-@Getter @Setter
-public class AdminDTO {
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+public class DoctorResponseDTO {
+
     private Long id;
 
     private String name;
@@ -21,9 +22,6 @@ public class AdminDTO {
 
     private String email;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String password;
-
     private String dni;
 
     @JsonProperty("birth_date")
@@ -31,6 +29,11 @@ public class AdminDTO {
 
     private Role role;
 
-    private String position;
+    private BigDecimal salary;
 
+    private String speciality;
+
+    private List<WorkingHourDTO> workingHours;
+
+    private List<ServiceResponseDTO> services;
 }

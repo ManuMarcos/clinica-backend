@@ -1,10 +1,12 @@
 package com.hackacode.clinica.service;
 
 import com.hackacode.clinica.dto.*;
+import com.hackacode.clinica.dto.appointment.AppointmentRequestDTO;
+import com.hackacode.clinica.dto.appointment.AppointmentResponseDTO;
+import com.hackacode.clinica.dto.appointment.AppointmentUpdateDTO;
 import com.hackacode.clinica.exception.BadRequestException;
 import com.hackacode.clinica.exception.ConflictException;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
-import com.hackacode.clinica.mapper.AppointmentMapper;
 import com.hackacode.clinica.model.*;
 import com.hackacode.clinica.repository.*;
 import lombok.RequiredArgsConstructor;

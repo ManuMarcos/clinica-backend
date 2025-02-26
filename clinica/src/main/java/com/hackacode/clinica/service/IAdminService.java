@@ -1,7 +1,7 @@
 package com.hackacode.clinica.service;
 
 
-import com.hackacode.clinica.dto.AdminDTO;
+import com.hackacode.clinica.dto.admin.AdminDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
