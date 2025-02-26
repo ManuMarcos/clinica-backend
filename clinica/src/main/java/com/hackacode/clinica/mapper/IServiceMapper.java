@@ -11,5 +11,6 @@ import org.springframework.stereotype.Component;
 public interface IServiceMapper {
 
     ServiceResponseDTO toResponseDTO(Service service);
+    
     Service toEntity(ServiceRequestDTO serviceRequestDTO);
 }

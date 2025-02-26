@@ -7,6 +7,7 @@ import com.hackacode.clinica.dto.appointment.AppointmentUpdateDTO;
 import com.hackacode.clinica.exception.BadRequestException;
 import com.hackacode.clinica.exception.ConflictException;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
+import com.hackacode.clinica.mapper.IAppointmentMapper;
 import com.hackacode.clinica.model.*;
 import com.hackacode.clinica.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +33,12 @@ public class AppointmentService implements IAppointmentService {
     private final IServiceRepository serviceRepository;
     private final IPatientRepository patientRepository;
     private final IDoctorRepository doctorRepository;
-    private final AppointmentMapper appointmentMapper;
+    private final IAppointmentMapper appointmentMapper;
 
 
     @Override
     public Page<AppointmentResponseDTO> findAll(Pageable pageable) {
-        return appointmentRepository.findAll(pageable).map(appointmentMapper::toDTO);
+        return appointmentRepository.findAll(pageable).map(appointmentMapper::toResponseDTO);
     }
 
     @Override
@@ -65,15 +66,8 @@ public class AppointmentService implements IAppointmentService {
             throw new ConflictException("The appointment is already booked!");
         };
 
-        var savedAppointment = appointmentRepository.save(Appointment.builder()
-                .service(service)
-                .doctor(doctor)
-                .patient(patient)
-                .status(AppointmentStatus.BOOKED)
-                .startTime(startTime)
-                .endTime(endTime)
-                .build());
-        return appointmentMapper.toDTO(savedAppointment);
+        var savedAppointment = appointmentRepository.save(appointmentMapper.toEntity(appointmentRequestDTO));
+        return appointmentMapper.toResponseDTO(savedAppointment);
     }
 
     @Override
@@ -83,7 +77,7 @@ public class AppointmentService implements IAppointmentService {
         for(Doctor doctor : doctors) {
             doctorAvailabilityDTOS.add(DoctorAvailabilityDTO.builder()
                     .doctorId(doctor.getId())
-                    .doctorName(doctor.getName() + " " + doctor.getSurname())
+                    .doctorName(doctor.getUser().getName() + " " + doctor.getUser().getSurname())
                     .doctorSpeciality(doctor.getSpeciality().getName())
                     .availableSlots(getAvailableTimesForDoctor(doctor, from, to))
                     .build());
@@ -106,7 +100,7 @@ public class AppointmentService implements IAppointmentService {
             appointment.setStatus(appointmentUpdateDTO.getStatus());
         }
         appointmentRepository.save(appointment);
-        return appointmentMapper.toDTO(appointment);
+        return appointmentMapper.toResponseDTO(appointment);
     }
 
     @Override

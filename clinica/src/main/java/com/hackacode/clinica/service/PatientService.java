@@ -2,7 +2,7 @@ package com.hackacode.clinica.service;
 
 import com.hackacode.clinica.dto.patient.PatientRequestDTO;
 import com.hackacode.clinica.dto.patient.PatientResponseDTO;
-import com.hackacode.clinica.dto.user.UserDTO;
+import com.hackacode.clinica.dto.user.UserRequestDTO;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
 import com.hackacode.clinica.mapper.IPatientMapper;
 import com.hackacode.clinica.model.Role;
@@ -23,19 +23,12 @@ public class PatientService implements IPatientService {
     private final IPatientRepository patientRepository;
     private final IPatientMapper patientMapper;
     private final IUserService userService;
-    private final PasswordEncoder passwordEncoder;
+
 
     @Override
-    public PatientResponseDTO save(PatientRequestDTO patientDTO) {
-        //TODO: To refactor
-        userService.validateUniqueConstraints(UserDTO.builder()
-                .email(patientDTO.getEmail())
-                .dni(patientDTO.getDni())
-                .build()
-        );
-        var patient = patientMapper.toEntity(patientDTO);
-        patient.setRole(Role.PATIENT);
-        patient.setPassword(passwordEncoder.encode(patientDTO.getPassword()));
+    public PatientResponseDTO save(PatientRequestDTO patientRequestDTO) {
+        userService.save(patientRequestDTO.getUser());
+        var patient = patientMapper.toEntity(patientRequestDTO);
         return patientMapper.toResponseDTO(patientRepository.save(patient));
     }
 

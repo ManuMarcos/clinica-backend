@@ -1,8 +1,9 @@
 package com.hackacode.clinica.service;
 
-import com.hackacode.clinica.dto.admin.AdminDTO;
-import com.hackacode.clinica.dto.user.UserDTO;
-import com.hackacode.clinica.mapper.AdminMapper;
+import com.hackacode.clinica.dto.admin.AdminRequestDTO;
+import com.hackacode.clinica.dto.admin.AdminResponseDTO;
+import com.hackacode.clinica.dto.user.UserRequestDTO;
+import com.hackacode.clinica.mapper.IAdminMapper;
 import com.hackacode.clinica.model.Role;
 import com.hackacode.clinica.repository.IAdminRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,30 +20,22 @@ import java.util.List;
 public class AdminService implements IAdminService {
 
     private final IAdminRepository adminRepository;
-    private final AdminMapper adminMapper;
+    private final IAdminMapper adminMapper;
     private final IUserService userService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public AdminDTO save(AdminDTO adminDTO) {
-        //TODO: To refactor
-        userService.validateUniqueConstraints(UserDTO.builder()
-                .email(adminDTO.getEmail())
-                .dni(adminDTO.getDni())
-                .build()
-        );
-        var admin = adminMapper.toEntity(adminDTO);
-        admin.setRole(Role.ADMIN);
-        admin.setPassword(passwordEncoder.encode(adminDTO.getPassword()));
-        return adminMapper.toDTO(adminRepository.save(admin));
+    public AdminResponseDTO save(AdminRequestDTO adminRequestDTO) {
+        var savedUser = userService.save(adminRequestDTO.getUser());
+        var admin = adminMapper.toEntity(adminRequestDTO);
+        admin.setUser(savedUser);
+        return adminMapper.toResponseDTO(adminRepository.save(admin));
     }
 
     @Override
-    public Page<AdminDTO> findAll(Pageable pageable) {
+    public Page<AdminResponseDTO> findAll(Pageable pageable) {
         var admins = adminRepository.findAll(pageable);
-        List<AdminDTO> adminDTOS = admins.stream()
-                .map(adminMapper::toDTO)
-                .toList();
+        var adminDTOS = admins.stream().map(adminMapper::toResponseDTO).toList();
         return new PageImpl<>(adminDTOS, pageable, adminDTOS.size());
     }
 

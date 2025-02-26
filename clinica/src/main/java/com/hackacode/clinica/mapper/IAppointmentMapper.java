@@ -11,5 +11,6 @@ import org.springframework.stereotype.Component;
 public interface IAppointmentMapper {
 
     AppointmentResponseDTO toResponseDTO(Appointment appointment);
+    
     Appointment toEntity(AppointmentRequestDTO appointmentRequestDTO);
 }

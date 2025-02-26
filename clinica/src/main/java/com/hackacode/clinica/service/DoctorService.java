@@ -3,12 +3,13 @@ package com.hackacode.clinica.service;
 import com.hackacode.clinica.dto.ServiceToDoctorRequestDTO;
 import com.hackacode.clinica.dto.doctor.DoctorRequestDTO;
 import com.hackacode.clinica.dto.doctor.DoctorResponseDTO;
-import com.hackacode.clinica.dto.user.UserDTO;
+import com.hackacode.clinica.dto.workingHour.WorkingHourRequestDTO;
 import com.hackacode.clinica.exception.BadRequestException;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
 import com.hackacode.clinica.exception.UnauthorizedException;
 import com.hackacode.clinica.mapper.IDoctorMapper;
 import com.hackacode.clinica.mapper.IServiceMapper;
+import com.hackacode.clinica.mapper.IWorkingHourMapper;
 import com.hackacode.clinica.model.Doctor;
 import com.hackacode.clinica.model.Role;
 import com.hackacode.clinica.model.Speciality;
@@ -41,37 +42,31 @@ public class DoctorService implements IDoctorService {
     private final IServiceMapper serviceMapper;
     private final IUserService userService;
     private final IServiceRepository serviceRepository;
+    private final IWorkingHourMapper workingHourMapper;
 
     @Override
-    public DoctorResponseDTO save(DoctorRequestDTO doctorDTO) {
-        //TODO: To refactor
-        userService.validateUniqueConstraints(UserDTO.builder()
-                .email(doctorDTO.getEmail())
-                .dni(doctorDTO.getDni())
-                .build()
-        );
-        if (doctorDTO.getSpecialityId() == null) {
+    public DoctorResponseDTO save(DoctorRequestDTO doctorRequestDTO) {
+        userService.save(doctorRequestDTO.getUser());
+        if (doctorRequestDTO.getSpecialityId() == null) {
             throw new IllegalArgumentException("Doctors must have speciality");
         }
-        Speciality speciality = specialityRepository.findById(doctorDTO.getSpecialityId())
+        Speciality speciality = specialityRepository.findById(doctorRequestDTO.getSpecialityId())
                 .orElseThrow(() -> new ResourceNotFoundException("Speciality not found"));
-        Doctor doctor = doctorMapper.toEntity(doctorDTO, speciality);
-        doctor.setPassword(passwordEncoder.encode(doctorDTO.getPassword()));
-        doctor.setRole(Role.DOCTOR);
-        return doctorMapper.toDTO(doctorRepository.save(doctor));
+        Doctor doctor = doctorMapper.toEntity(doctorRequestDTO);
+        return doctorMapper.toResponseDTO(doctorRepository.save(doctor));
     }
 
     @Override
-    public Page<DoctorDTO> findAll(Pageable pageable) {
+    public Page<DoctorResponseDTO> findAll(Pageable pageable) {
         var doctors = doctorRepository.findAll(pageable);
-        var doctorDTOS = doctors.stream().map(doctorMapper::toDTO).toList();
+        var doctorDTOS = doctors.stream().map(doctorMapper::toResponseDTO).toList();
         return new PageImpl<>(doctorDTOS, pageable, doctorDTOS.size());
     }
 
     @Override
-    public void addWorkingHour(Long doctorId, WorkingHourDTO workingHourDTO) {
+    public void addWorkingHour(Long doctorId, WorkingHourRequestDTO workingHourDTO) {
         var doctor = this.getDoctorById(doctorId);
-        doctor.addWorkingHour(WorkingHourDTO.toEntity(workingHourDTO));
+        doctor.addWorkingHour(workingHourMapper.toEntity(workingHourDTO));
         doctorRepository.save(doctor);
     }
 
@@ -89,9 +84,10 @@ public class DoctorService implements IDoctorService {
     }
 
     @Override
-    public List<Doctor> findAvailableDoctors(LocalDateTime start, LocalDateTime end, Long serviceId) {
-        return doctorRepository.findAvailableDoctors(start.getDayOfWeek(),start.toLocalTime(),
-                        serviceId, start, end);
+    public List<DoctorResponseDTO> findAvailableDoctors(LocalDateTime start, LocalDateTime end, Long serviceId) {
+        var doctors = doctorRepository.findAvailableDoctors(start.getDayOfWeek(),start.toLocalTime(),
+                serviceId, start, end);
+        return doctors.stream().map(doctorMapper::toResponseDTO).toList();
     }
 
     @Override
@@ -118,13 +114,13 @@ public class DoctorService implements IDoctorService {
     }
 
     @Override
-    public Page<DoctorDTO> search(String name, Long specialityId, Pageable pageable) {
+    public Page<DoctorResponseDTO> search(String name, Long specialityId, Pageable pageable) {
         Page<Doctor> doctors;
         if(name != null && specialityId != null) {
-            doctors = doctorRepository.findBySpecialityIdAndNameContaining(specialityId, name, pageable);
+            doctors = doctorRepository.findBySpecialityIdAndUser_NameContaining(specialityId, name, pageable);
         }
         else if(name != null){
-             doctors = doctorRepository.findByNameContaining(name, pageable);
+             doctors = doctorRepository.findByUser_NameContaining(name, pageable);
         }
         else if(specialityId != null){
             doctors = doctorRepository.findBySpecialityId(specialityId, pageable);
@@ -132,18 +128,18 @@ public class DoctorService implements IDoctorService {
         else{
             doctors = doctorRepository.findAll(pageable);
         }
-        return doctors.map(doctorMapper::toDTO);
+        return doctors.map(doctorMapper::toResponseDTO);
     }
 
     @Override
-    public DoctorDTO findById(Long id) {
+    public DoctorResponseDTO findById(Long id) {
         var doctor = this.getDoctorById(id);
-        return doctorMapper.toDTO(doctor);
+        return doctorMapper.toResponseDTO(doctor);
     }
 
 
     @Override
-    public DoctorDTO update(Doctor doctor) {
+    public DoctorResponseDTO update(DoctorRequestDTO doctorRequestDTO) {
         return null;
     }
 

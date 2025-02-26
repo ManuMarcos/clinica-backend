@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 @Mapper(componentModel = "spring")
 public interface ISpecialityMapper {
 
-
     SpecialityResponseDTO toResponseDTO(Speciality speciality);
 
     Speciality toEntity(SpecialityRequestDTO specialityRequestDTO);

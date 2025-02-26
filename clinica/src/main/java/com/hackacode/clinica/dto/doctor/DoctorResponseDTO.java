@@ -2,38 +2,25 @@ package com.hackacode.clinica.dto.doctor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hackacode.clinica.dto.service.ServiceResponseDTO;
+import com.hackacode.clinica.dto.user.UserRequestDTO;
+import com.hackacode.clinica.dto.workingHour.WorkingHourResponseDTO;
 import com.hackacode.clinica.model.Role;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
-@Builder
+@NoArgsConstructor
 public class DoctorResponseDTO {
 
     private Long id;
-
-    private String name;
-
-    private String surname;
-
-    private String email;
-
-    private String dni;
-
-    @JsonProperty("birth_date")
-    private LocalDate birthDate;
-
-    private Role role;
-
-    private BigDecimal salary;
-
+    private UserRequestDTO user;
     private String speciality;
-
-    private List<WorkingHourDTO> workingHours;
-
+    @JsonProperty("working_hours")
+    private List<WorkingHourResponseDTO> workingHours;
     private List<ServiceResponseDTO> services;
 }

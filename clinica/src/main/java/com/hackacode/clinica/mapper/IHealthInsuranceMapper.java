@@ -10,5 +10,6 @@ import org.springframework.stereotype.Component;
 @Mapper(componentModel = "spring")
 public interface IHealthInsuranceMapper {
     HealthInsuranceResponseDTO toResponseDTO(HealthInsurance healthInsurance);
+    
     HealthInsurance toEntity(HealthInsuranceRequestDTO healthInsuranceRequestDTO);
 }

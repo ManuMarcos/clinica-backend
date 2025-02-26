@@ -9,18 +9,23 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
-@SuperBuilder
+
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class UserResponseDTO {
 
     private Long id;
+
     private String name;
+
     private String surname;
+
     private String email;
+
     private String dni;
+
     @JsonProperty("birth_date")
     private LocalDate birthDate;
+
     private Role role;
 }

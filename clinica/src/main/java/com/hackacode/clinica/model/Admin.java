@@ -1,14 +1,21 @@
 package com.hackacode.clinica.model;
 
-import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@SuperBuilder
-@NoArgsConstructor
-public class Admin extends User{
+@Getter
+@Setter  @AllArgsConstructor @NoArgsConstructor
+public class Admin {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    private User user;
+
     private String position;
 }

@@ -87,7 +87,7 @@ public class PackageService implements IPackageService {
         boolean hasHealthInsurance = false;
         if(authService.isPatient()){
             String userEmail = authService.getCurrentUserEmail();
-            Patient patient = patientRepository.findByEmail(userEmail).orElseThrow(
+            Patient patient = patientRepository.findByUser_email(userEmail).orElseThrow(
                     () -> new ResourceNotFoundException("Patient with email " + userEmail+ " not found")
             );
             if(patient.getHealthInsurance() != null){

@@ -4,7 +4,7 @@ import com.hackacode.clinica.dto.authentication.AccessTokenDTO;
 import com.hackacode.clinica.dto.authentication.LoginRequestDTO;
 import com.hackacode.clinica.dto.authentication.LoginResponseDTO;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
-import com.hackacode.clinica.mapper.UserMapper;
+import com.hackacode.clinica.mapper.IUserMapper;
 import com.hackacode.clinica.model.*;
 import com.hackacode.clinica.repository.*;
 import jakarta.validation.constraints.NotNull;
@@ -30,7 +30,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final IRefreshTokenRepository refreshTokenRepository;
-    private final UserMapper userMapper;
+    private final IUserMapper userMapper;
 
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.email(), loginRequestDTO.password()));
@@ -51,7 +51,7 @@ public class AuthService {
         return LoginResponseDTO.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .user(userMapper.toDTO(user))
+                .user(userMapper.toResponseDTO(user))
                 .build();
     }
 
@@ -70,7 +70,7 @@ public class AuthService {
         String newAccessToken = jwtService.generateToken(user, user.getId());
         return AccessTokenDTO.builder()
                 .accessToken(newAccessToken)
-                .user(userMapper.toDTO(user))
+                .user(userMapper.toResponseDTO(user))
                 .build();
     }
 

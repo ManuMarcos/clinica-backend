@@ -28,8 +28,8 @@ public interface IDoctorRepository extends JpaRepository<Doctor, Long> {
                                       @Param("endTime") LocalDateTime endTime);
     List<Doctor> findByServices_id(Long serviceId);
     Page<Doctor> findBySpecialityId(Long specialityId, Pageable pageable);
-    Page<Doctor> findByNameContaining(String name, Pageable pageable);
-    Page<Doctor> findBySpecialityIdAndNameContaining(Long speciality_specialityId, String name, Pageable pageable);
-    Page<Doctor> findByNameContainingIgnoreCaseOrSpecialityId(String name, Long specialityId, Pageable pageable);
+    Page<Doctor> findByUser_NameContaining(String name, Pageable pageable);
+    Page<Doctor> findBySpecialityIdAndUser_NameContaining(Long speciality_specialityId, String name, Pageable pageable);
+    Page<Doctor> findByUser_NameContainingIgnoreCaseOrSpecialityId(String name, Long specialityId, Pageable pageable);
     boolean existsBySpecialityId(Long specialityId);
 }
