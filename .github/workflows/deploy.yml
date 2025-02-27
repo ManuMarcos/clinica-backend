@@ -52,7 +52,7 @@ jobs:
         username: ${{ secrets.AZURE_VM_USER }}
         password: ${{ secrets.AZURE_VM_PASSWORD }}
         script: |
-          echo ${{ secrets.DOCKER_PASSWORD }} | sudo docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          echo '${{ secrets.DOCKER_PASSWORD }}' | sudo docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin
           
           # Detener el contenedor actual
           sudo docker-compose -f ClinicaApp/clinica-backend/docker-compose.yml down
