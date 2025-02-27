@@ -2,6 +2,7 @@ version: '3'
 
 services:
   clinica:
+    image: clinica-backend:latest
     build: clinica
     mem_limit: 512m
     ports:

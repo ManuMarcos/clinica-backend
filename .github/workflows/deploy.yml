@@ -1,0 +1,52 @@
+name: Deploy to Azure VM
+
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Paso 1: Configurar Docker
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Set up Docker CLI
+      uses: docker/setup-qemu-action@v2
+
+    # Paso 2: Iniciar sesión en Docker Hub
+    - name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    # Paso 3: Construir la imagen Docker y etiquetarla
+    - name: Build Docker image
+      run: |
+        docker build -t clinica-backend:latest .
+
+    # Paso 4: Subir la imagen a Docker Hub
+    - name: Push Docker image to Docker Hub
+      run: |
+        docker push clinica-backend:latest
+
+    # Paso 5: Conectar y desplegar en la máquina virtual de Azure
+    - name: SSH to Azure VM and deploy
+      uses: appleboy/ssh-action@v0.1.5
+      with:
+        host: ${{ secrets.AZURE_VM_IP }}
+        username: ${{ secrets.AZURE_VM_USER }}
+        password: ${{ secrets.AZURE_VM_PASSWORD }}
+        script: |
+          # Detener el contenedor actual
+          docker-compose -f /ClinicaApp/clinica-backend/docker-compose.yml down
+          
+          # Extraer la última imagen del contenedor
+          docker pull clinica-backend:latest
+          
+          # Subir y ejecutar el contenedor nuevo
+          docker-compose -f /ClinicaApp/clinica-backend/docker-compose.yml up -d

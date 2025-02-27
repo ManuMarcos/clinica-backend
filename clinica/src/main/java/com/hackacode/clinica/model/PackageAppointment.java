@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @NoArgsConstructor @AllArgsConstructor
 @Builder
@@ -17,12 +19,13 @@ public class PackageAppointment {
     @ManyToOne
     @JoinColumn(name = "appointment_id", nullable = false)
     private Appointment appointment;
-
+    
     @ManyToOne
-    @JoinColumn(name = "service_id", nullable = false)
-    private Service service;
+    @JoinColumn(name = "package_id")
+    private Package servicePackage;
 
-    @ManyToOne
-    @JoinColumn(name = "purchased_package_id", nullable = false)
-    private PurchasedPackage purchasedPackage;
+    private LocalDateTime createdAt;
+
+    private boolean isCompleted;
+
 }

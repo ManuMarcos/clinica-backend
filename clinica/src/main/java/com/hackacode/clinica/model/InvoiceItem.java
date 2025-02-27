@@ -11,8 +11,11 @@ public class InvoiceItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String description;
+    private BigDecimal discount;
+
     private BigDecimal price;
+
+    private BigDecimal finalPrice;
 
     @ManyToOne
     private Invoice invoice;
