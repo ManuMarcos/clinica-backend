@@ -33,7 +33,7 @@ jobs:
     # Paso 4: Construir la imagen Docker y etiquetarla
     - name: Build Docker image
       run: |
-        docker build -t clinica-backend:latest -f ./clinica/Dockerfile ./clinica
+        docker build -t clinica-backend:latest -f ./clinica/Dockerfile .
 
     # Paso 5: Subir la imagen a Docker Hub
     - name: Push Docker image to Docker Hub
