@@ -43,10 +43,10 @@ jobs:
         password: ${{ secrets.AZURE_VM_PASSWORD }}
         script: |
           # Detener el contenedor actual
-          docker-compose -f /ClinicaApp/clinica-backend/docker-compose.yml down
+          sudo docker-compose -f ClinicaApp/clinica-backend/docker-compose.yml down
           
           # Extraer la última imagen del contenedor
-          docker pull clinica-backend:latest
+          sudo docker pull clinica-backend:latest
           
           # Subir y ejecutar el contenedor nuevo
-          docker-compose -f /ClinicaApp/clinica-backend/docker-compose.yml up -d
+          sudo docker-compose -f ClinicaApp/clinica-backend/docker-compose.yml up -d
