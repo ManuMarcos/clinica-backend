@@ -24,17 +24,23 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Paso 3: Construir la imagen Docker y etiquetarla
+
+    # Paso 3: Verificar la estructura del repositorio
+    - name: Check repository structure
+      run: |
+        ls -R
+
+    # Paso 4: Construir la imagen Docker y etiquetarla
     - name: Build Docker image
       run: |
         docker build -t clinica-backend:latest -f ./clinica/Dockerfile ./clinica
 
-    # Paso 4: Subir la imagen a Docker Hub
+    # Paso 5: Subir la imagen a Docker Hub
     - name: Push Docker image to Docker Hub
       run: |
         docker push clinica-backend:latest
 
-    # Paso 5: Conectar y desplegar en la máquina virtual de Azure
+    # Paso 6: Conectar y desplegar en la máquina virtual de Azure
     - name: SSH to Azure VM and deploy
       uses: appleboy/ssh-action@v0.1.5
       with:
