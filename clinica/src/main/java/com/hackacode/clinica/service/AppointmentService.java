@@ -8,6 +8,7 @@ import com.hackacode.clinica.exception.BadRequestException;
 import com.hackacode.clinica.exception.ConflictException;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
 import com.hackacode.clinica.mapper.IAppointmentMapper;
+import com.hackacode.clinica.mapper.IServiceMapper;
 import com.hackacode.clinica.model.*;
 import com.hackacode.clinica.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +32,11 @@ public class AppointmentService implements IAppointmentService {
 
     private final IAppointmentRepository appointmentRepository;
     private final IServiceRepository serviceRepository;
-    private final IPatientRepository patientRepository;
-    private final IDoctorRepository doctorRepository;
     private final IAppointmentMapper appointmentMapper;
+    private final ServiceService serviceService;
+    private final PatientService patientService;
+    private final DoctorService doctorService;
+    private final IDoctorRepository doctorRepository;
 
 
     @Override
@@ -43,31 +46,7 @@ public class AppointmentService implements IAppointmentService {
 
     @Override
     public AppointmentResponseDTO save(AppointmentRequestDTO appointmentRequestDTO) {
-        LocalDateTime startTime = appointmentRequestDTO.getDate().atTime(appointmentRequestDTO.getTime());
-        var service = serviceRepository.findById(appointmentRequestDTO.getServiceId()).orElseThrow(
-                () -> new ResourceNotFoundException("Service with id: " + appointmentRequestDTO.getServiceId()
-                        + "not found!"));
-        var patient = patientRepository.findById(appointmentRequestDTO.getPatientId()).orElseThrow(
-                () -> new ResourceNotFoundException("Patient with id: " + appointmentRequestDTO.getPatientId()
-                        + "not found!"));
-        var doctor = doctorRepository.findById(appointmentRequestDTO.getDoctorId()).orElseThrow(
-                () -> new ResourceNotFoundException("Doctor with id: " + appointmentRequestDTO.getDoctorId()
-                    + "not found!"));
-        if(!ifDoctorProvidesService(doctor, service)) {
-            throw new BadRequestException("The doctor with id: " + doctor.getId()
-                + "does not provide the service with id: " + service.getId());
-        }
-        if(!ifDoctorWorksThisDayAtTime(doctor, startTime)){
-            throw new BadRequestException("The doctor with id: " + doctor.getId()
-                + "does not work this day at time:" + startTime);
-        }
-        LocalDateTime endTime = startTime.plusMinutes(doctor.getAppointmentDuration());
-        if(appointmentRepository.existsBookedAppointment(doctor.getId(), startTime, endTime)){
-            throw new ConflictException("The appointment is already booked!");
-        };
-
-        var savedAppointment = appointmentRepository.save(appointmentMapper.toEntity(appointmentRequestDTO));
-        return appointmentMapper.toResponseDTO(savedAppointment);
+        return null;
     }
 
     @Override
@@ -91,6 +70,32 @@ public class AppointmentService implements IAppointmentService {
             this.getById(id);
         }
         appointmentRepository.deleteById(id);
+    }
+
+    @Override
+    public AppointmentResponseDTO createAppointmentForService(Long serviceId, AppointmentRequestDTO appointmentRequestDTO) {
+        LocalDateTime startTime = appointmentRequestDTO.getDate().atTime(appointmentRequestDTO.getTime());
+        var service = serviceService.findById(serviceId);
+        var patient = patientService.findById(appointmentRequestDTO.getPatientId());
+        var doctor = doctorService.findById(appointmentRequestDTO.getDoctorId());
+        if(!doctorService.ifDoctorProvidesService(serviceId, doctor.getId())) {
+            throw new BadRequestException("The doctor with id: " + doctor.getId()
+                    + " does not provide the service with id: " + service.getId());
+        }
+        LocalDateTime endTime = startTime.plusMinutes(doctor.getAppointmentDuration());
+        if(!doctorService.ifDoctorWorksThisDayAtTime(doctor.getId(),startTime, endTime)) {
+            throw new BadRequestException("The doctor with id: " + doctor.getId()
+                    + " does not work this day at time:" + startTime);
+        }
+        if(appointmentRepository.existsBookedAppointment(doctor.getId(), startTime, endTime)){
+            throw new ConflictException("The appointment is already booked!");
+        };
+        var appointment = appointmentMapper.toEntity(appointmentRequestDTO);
+        appointment.setStartTime(startTime);
+        appointment.setEndTime(endTime);
+        appointment.setStatus(AppointmentStatus.BOOKED);
+        appointment.setService(serviceRepository.findById(serviceId).get());
+        return appointmentMapper.toResponseDTO(appointmentRepository.save(appointment));
     }
 
     @Override

@@ -20,5 +20,6 @@ public interface IAppointmentService {
     boolean isPatientAvailable(Patient patient, LocalDateTime startTime, LocalDateTime endTime);
     List<DoctorAvailabilityDTO> getAvailabilityForService(Long serviceId, LocalDate from, LocalDate to);
     void deleteById(Long id);
+    AppointmentResponseDTO createAppointmentForService(Long serviceId, AppointmentRequestDTO appointmentRequestDTO);
 
 }

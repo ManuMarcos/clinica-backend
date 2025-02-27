@@ -11,8 +11,7 @@ import java.time.LocalDateTime;
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "appointment_id")
-    private Long appointmentId;
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;

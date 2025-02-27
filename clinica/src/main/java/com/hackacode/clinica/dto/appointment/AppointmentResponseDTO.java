@@ -1,5 +1,6 @@
 package com.hackacode.clinica.dto.appointment;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hackacode.clinica.dto.doctor.DoctorResponseDTO;
 import com.hackacode.clinica.dto.patient.PatientResponseDTO;
 import com.hackacode.clinica.dto.service.ServiceResponseDTO;
@@ -17,7 +18,12 @@ public class AppointmentResponseDTO {
     private Long id;
     private LocalDateTime dateTime;
     private AppointmentStatus status;
-    private DoctorResponseDTO doctor;
-    private PatientResponseDTO patient;
-    private ServiceResponseDTO service;
+    @JsonProperty("doctor_name")
+    private String doctorName;
+    @JsonProperty("patient_name")
+    private String patientName;
+    @JsonProperty("service_name")
+    private String serviceName;
+    @JsonProperty("service_code")
+    private String serviceCode;
 }

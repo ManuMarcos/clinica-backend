@@ -16,9 +16,6 @@ public class AppointmentRequestDTO {
 
     private LocalTime time;
 
-    @JsonProperty("service_id")
-    private Long serviceId;
-
     @JsonProperty("patient_id")
     private Long patientId;
 

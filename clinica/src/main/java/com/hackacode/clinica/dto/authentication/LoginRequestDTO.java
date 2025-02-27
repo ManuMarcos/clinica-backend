@@ -1,7 +1,12 @@
 package com.hackacode.clinica.dto.authentication;
 
-public record LoginRequestDTO(
-        String email,
-        String password
-) {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor @NoArgsConstructor
+public class LoginRequestDTO {
+    String email;
+    String password;
 }

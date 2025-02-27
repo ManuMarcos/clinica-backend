@@ -22,6 +22,4 @@ public class UserRequestDTO {
     @JsonProperty("birth_date")
     private LocalDate birthDate;
 
-    private Role role;
-
 }

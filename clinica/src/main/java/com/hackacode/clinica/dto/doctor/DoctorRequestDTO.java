@@ -14,7 +14,6 @@ import java.time.LocalDate;
 @NoArgsConstructor @AllArgsConstructor
 public class DoctorRequestDTO {
     private UserRequestDTO user;
-    @JsonProperty("birth_date")
     private BigDecimal salary;
     @JsonProperty(value ="speciality_id")
     private Long specialityId;

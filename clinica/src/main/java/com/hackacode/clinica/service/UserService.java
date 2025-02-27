@@ -5,6 +5,7 @@ import com.hackacode.clinica.dto.user.UserResponseDTO;
 import com.hackacode.clinica.exception.BadRequestException;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
 import com.hackacode.clinica.mapper.IUserMapper;
+import com.hackacode.clinica.model.Role;
 import com.hackacode.clinica.model.User;
 import com.hackacode.clinica.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class UserService implements IUserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public User save(UserRequestDTO userRequestDTO) {
+    public User save(UserRequestDTO userRequestDTO, Role role) {
         if(userRepository.existsByDni(userRequestDTO.getDni())){
             throw new BadRequestException("User with dni: " + userRequestDTO.getDni() + " already exists");
         }
@@ -32,6 +33,7 @@ public class UserService implements IUserService {
         }
         var newUser = userMapper.toEntity(userRequestDTO);
         newUser.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
+        newUser.setRole(role);
         return newUser;
     }
 

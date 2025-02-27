@@ -13,8 +13,7 @@ public class Consultation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "consultation_id")
-    private Long consultationId;
+    private Long id;
 
     private LocalDateTime date;
 

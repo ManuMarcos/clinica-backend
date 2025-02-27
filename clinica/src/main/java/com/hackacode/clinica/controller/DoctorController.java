@@ -27,28 +27,41 @@ public class DoctorController {
     private final IDoctorService doctorService;
 
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Create a new doctor.",
+            description = " This endpoint allows you to create a new doctor. You must provide the doctor’s personal details " +
+                    "The doctor will be added to the system upon successful creation.")
     @PostMapping
     public ResponseEntity<DoctorResponseDTO> save(@Valid @RequestBody DoctorRequestDTO doctorDTO) {
         return new ResponseEntity<>(doctorService.save(doctorDTO), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<PaginatedResponseDTO<DoctorResponseDTO>> findAll(Pageable pageable) {
-        return ResponseEntity.ok(PaginatedResponseDTO.fromPage(doctorService.findAll(pageable)));
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<PaginatedResponseDTO<DoctorResponseDTO>> searchDoctors(
+    @Operation(summary = "Retrieve all doctors or filter by name, specialty id",
+            description = "This endpoint retrieves a list of doctors. You can filter the results by " +
+                    "providing query parameters such as the doctor’s name, specialty ID, or other available filters. " +
+                    "If no filters are provided, all doctors will be returned.")
+    public ResponseEntity<PaginatedResponseDTO<DoctorResponseDTO>> findAll(
             @RequestParam(required = false) String name,
-            @RequestParam(name = "speciality_id", required = false) Long specialityId,
-            @PageableDefault(size = 10, sort = "name") Pageable pageable
-    ){
-        return ResponseEntity.ok(PaginatedResponseDTO.fromPage(doctorService.search(name, specialityId, pageable)));
+            @RequestParam(required = false) Long specialtyId,
+            Pageable pageable) {
+        return ResponseEntity.ok(PaginatedResponseDTO.fromPage(doctorService.findAll(name,specialtyId,pageable)));
     }
 
     @GetMapping("/{doctorId}")
+    @Operation(summary = "Retrieve a doctor by their unique ID",
+            description = "This endpoint retrieves the details of a specific doctor using their unique ID. The response will include the user’s personal information, " +
+                    "specialty, working hours, and any other available details")
     public ResponseEntity<DoctorResponseDTO> getById(@PathVariable Long doctorId) {
         return ResponseEntity.ok(doctorService.findById(doctorId));
+    }
+
+    @DeleteMapping("/{doctorId}")
+    @Operation(summary = "Delete a doctor by ID.",
+            description = "This endpoint allows you to delete a doctor from the system using their unique ID. " +
+                    "Once deleted, the doctor will no longer be available in the system.")
+    public ResponseEntity<String> deleteById(@PathVariable Long doctorId) {
+        doctorService.deleteById(doctorId);
+        return ResponseEntity.ok("Doctor removed successfully.");
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -70,13 +83,17 @@ public class DoctorController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
-    @PostMapping("/{doctorId}/services")
-    public ResponseEntity<String> addServiceToDoctor(@PathVariable Long doctorId, @Valid @RequestBody ServiceToDoctorRequestDTO serviceToDoctorRequestDTO){
-        doctorService.addService(doctorId, serviceToDoctorRequestDTO);
+    @Operation(summary = "Add a service to a doctor",
+            description = "Adds an existing service to a doctor")
+    @PutMapping("/{doctorId}/services/{serviceId}")
+    public ResponseEntity<String> addServiceToDoctor(@PathVariable Long doctorId, @PathVariable Long serviceId){
+        doctorService.addService(doctorId, serviceId);
         return new ResponseEntity<>("Service added successfully.", HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
+    @Operation(summary = "Remove a service from a doctor",
+            description = "Removes an specific service by its ID from a doctor")
     @DeleteMapping("/{doctorId}/services/{serviceId}")
     public ResponseEntity<String> removeServiceFromDoctor(@PathVariable Long doctorId, @PathVariable Long serviceId) {
         doctorService.removeService(doctorId,serviceId);

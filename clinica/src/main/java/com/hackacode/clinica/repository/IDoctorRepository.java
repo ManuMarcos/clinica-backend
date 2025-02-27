@@ -28,8 +28,18 @@ public interface IDoctorRepository extends JpaRepository<Doctor, Long> {
                                       @Param("endTime") LocalDateTime endTime);
     List<Doctor> findByServices_id(Long serviceId);
     Page<Doctor> findBySpecialityId(Long specialityId, Pageable pageable);
-    Page<Doctor> findByUser_NameContaining(String name, Pageable pageable);
+    Page<Doctor> findByUser_NameContainingIgnoreCase(String name, Pageable pageable);
     Page<Doctor> findBySpecialityIdAndUser_NameContaining(Long speciality_specialityId, String name, Pageable pageable);
     Page<Doctor> findByUser_NameContainingIgnoreCaseOrSpecialityId(String name, Long specialityId, Pageable pageable);
     boolean existsBySpecialityId(Long specialityId);
+    boolean existsByIdAndServicesId(Long doctorId,Long serviceId);
+    @Query("SELECT CASE WHEN COUNT(wh) > 0 THEN true ELSE false END " +
+            "FROM WorkingHour wh WHERE wh.doctor.id = :doctorId " +
+            "AND wh.dayOfWeek = :dayOfWeek " +
+            "AND :timeFrom >= wh.timeFrom AND :timeFrom < wh.timeTo " +
+            "AND :timeTo > wh.timeFrom AND :timeTo <= wh.timeTo")
+    boolean ifDoctorWorksThisDayAtTime(@Param("doctorId") Long doctorId,
+                                       @Param("dayOfWeek") DayOfWeek dayOfWeek,
+                                       @Param("timeFrom") LocalTime timeFrom,
+                                       @Param("timeTo") LocalTime timeTo);
 }

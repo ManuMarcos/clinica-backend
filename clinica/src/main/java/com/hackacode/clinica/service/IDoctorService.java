@@ -17,11 +17,12 @@ public interface IDoctorService {
     DoctorResponseDTO findById(Long id);
     DoctorResponseDTO update(DoctorRequestDTO doctorRequestDTO);
     void deleteById(Long id);
-    Page<DoctorResponseDTO> findAll(Pageable pageable);
+    Page<DoctorResponseDTO> findAll(String name, Long specialityId, Pageable pageable);
     void addWorkingHour(Long doctorId, WorkingHourRequestDTO workingHourRequestDTO);
     void deleteWorkingHour(Long doctorId, Long workingHourId);
     List<DoctorResponseDTO> findAvailableDoctors(LocalDateTime start, LocalDateTime end, Long serviceId);
-    void addService(Long doctorId, ServiceToDoctorRequestDTO serviceToDoctorRequestDTO);
+    void addService(Long doctorId, Long serviceId);
     void removeService(Long doctorId, Long serviceId);
-    Page<DoctorResponseDTO> search(String name, Long specialityId, Pageable pageable);
+    boolean ifDoctorProvidesService(Long doctorId, Long serviceId);
+    boolean ifDoctorWorksThisDayAtTime(Long doctorId, LocalDateTime timeFrom, LocalDateTime timeTo);
 }

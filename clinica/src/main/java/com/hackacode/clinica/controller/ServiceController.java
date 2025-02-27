@@ -1,7 +1,11 @@
 package com.hackacode.clinica.controller;
 
+import com.hackacode.clinica.dto.appointment.AppointmentRequestDTO;
+import com.hackacode.clinica.dto.appointment.AppointmentResponseDTO;
 import com.hackacode.clinica.dto.service.ServiceRequestDTO;
 import com.hackacode.clinica.dto.service.ServiceResponseDTO;
+import com.hackacode.clinica.mapper.IAppointmentMapper;
+import com.hackacode.clinica.service.AppointmentService;
 import com.hackacode.clinica.service.IServiceService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -20,6 +24,8 @@ import java.util.List;
 public class ServiceController {
 
     private final IServiceService serviceService;
+    private final IAppointmentMapper appointmentMapper;
+    private final AppointmentService appointmentService;
 
     @GetMapping
     public List<ServiceResponseDTO> getAll(Pageable pageable) {
@@ -44,6 +50,11 @@ public class ServiceController {
         return ResponseEntity.ok("Service deleted successfully.");
     }
 
+    @PostMapping("/{serviceId}/appointments")
+    public ResponseEntity<AppointmentResponseDTO> addAppointment(@PathVariable Long serviceId,
+                                                                 @RequestBody @Valid AppointmentRequestDTO appointmentRequestDTO) {
+        return new ResponseEntity<>(appointmentService.createAppointmentForService(serviceId,appointmentRequestDTO), HttpStatus.CREATED);
+    }
 
 
 

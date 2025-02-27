@@ -7,7 +7,8 @@ import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 
 @Component
-@Mapper(componentModel = "spring", uses = {IUserMapper.class, IHealthInsuranceMapper.class})
+@Mapper(componentModel = "spring", uses = {IUserMapper.class, IHealthInsuranceMapper.class,
+        IAppointmentMapper.class})
 public interface IPatientMapper {
     PatientResponseDTO toResponseDTO(Patient patient);
     Patient toEntity(PatientRequestDTO patientRequestDTO);

@@ -4,6 +4,7 @@ import com.hackacode.clinica.dto.admin.AdminRequestDTO;
 import com.hackacode.clinica.dto.admin.AdminResponseDTO;
 import com.hackacode.clinica.dto.user.UserRequestDTO;
 import com.hackacode.clinica.mapper.IAdminMapper;
+import com.hackacode.clinica.mapper.IUserMapper;
 import com.hackacode.clinica.model.Role;
 import com.hackacode.clinica.repository.IAdminRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +22,14 @@ public class AdminService implements IAdminService {
 
     private final IAdminRepository adminRepository;
     private final IAdminMapper adminMapper;
+    private final IUserMapper userMapper;
     private final IUserService userService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public AdminResponseDTO save(AdminRequestDTO adminRequestDTO) {
-        var savedUser = userService.save(adminRequestDTO.getUser());
+        var user = userMapper.toEntity(adminRequestDTO.getUser());
+        var savedUser = userService.save(adminRequestDTO.getUser(), Role.ADMIN);
         var admin = adminMapper.toEntity(adminRequestDTO);
         admin.setUser(savedUser);
         return adminMapper.toResponseDTO(adminRepository.save(admin));

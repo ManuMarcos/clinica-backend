@@ -33,8 +33,8 @@ public class AuthService {
     private final IUserMapper userMapper;
 
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.email(), loginRequestDTO.password()));
-        User user = userRepository.findByEmail(loginRequestDTO.email()).orElseThrow(
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
+        User user = userRepository.findByEmail(loginRequestDTO.getEmail()).orElseThrow(
                 () -> new UsernameNotFoundException("User not found")
         );
         refreshTokenRepository.revokeToken(user.getId());

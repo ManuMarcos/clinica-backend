@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
@@ -36,16 +37,16 @@ public class Doctor {
             joinColumns = @JoinColumn(name = "doctor_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id")
     )
-    private List<Service> services;
+    private List<Service> services = new ArrayList<>();
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<WorkingHour> workingHours;
+    private List<WorkingHour> workingHours = new ArrayList<>();
 
 
     @OneToMany(mappedBy = "doctor",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<Appointment> appointments;
+    private List<Appointment> appointments = new ArrayList<>();
 
     public void addWorkingHour(WorkingHour workingHour) {
         this.workingHours.add(workingHour);
@@ -53,7 +54,7 @@ public class Doctor {
     }
 
     public boolean removeWorkingHour(WorkingHour workingHour) {
-        if(this.workingHours.removeIf(wh -> wh.getWorkingHourId().equals(workingHour.getWorkingHourId()))){
+        if(this.workingHours.removeIf(wh -> wh.getId().equals(workingHour.getId()))){
             workingHour.setDoctor(null);
             return true;
         };

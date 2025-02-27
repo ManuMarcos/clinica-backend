@@ -14,7 +14,9 @@ import org.springframework.stereotype.Component;
 @Mapper(componentModel = "spring", uses = {ISpecialityMapper.class, IServiceMapper.class,
 IAppointmentMapper.class, IWorkingHourMapper.class, IUserMapper.class})
 public interface IDoctorMapper {
+    @Mapping(target = "speciality", source = "speciality.name")
     DoctorResponseDTO toResponseDTO(Doctor doctor);
 
+    @Mapping(target = "speciality.id", source = "specialityId")
     Doctor toEntity(DoctorRequestDTO doctorRequestDTO);
 }

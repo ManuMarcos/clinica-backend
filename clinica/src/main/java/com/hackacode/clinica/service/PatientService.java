@@ -27,8 +27,9 @@ public class PatientService implements IPatientService {
 
     @Override
     public PatientResponseDTO save(PatientRequestDTO patientRequestDTO) {
-        userService.save(patientRequestDTO.getUser());
+        var savedUser = userService.save(patientRequestDTO.getUser(), Role.PATIENT);
         var patient = patientMapper.toEntity(patientRequestDTO);
+        patient.setUser(savedUser);
         return patientMapper.toResponseDTO(patientRepository.save(patient));
     }
 

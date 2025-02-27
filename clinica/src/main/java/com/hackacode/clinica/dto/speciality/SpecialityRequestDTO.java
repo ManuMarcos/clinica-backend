@@ -6,8 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@AllArgsConstructor @NoArgsConstructor
 public class SpecialityRequestDTO {
+
     @NotNull(message = "The name cannot be null")
     @NotBlank(message = "The name cannot be empty")
     private String name;

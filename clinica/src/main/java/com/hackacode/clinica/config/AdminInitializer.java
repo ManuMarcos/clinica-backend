@@ -19,8 +19,7 @@ public class AdminInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         if(!adminService.existsAdmin()){
             var adminDTO = new AdminRequestDTO(new UserRequestDTO("admin","defaultAdmin",
-                    "defaultadmin@clinica.com", "admin", "41915027",LocalDate.now(),
-                    Role.ADMIN), "superAdmin");
+                    "defaultadmin@clinica.com", "admin", "41915027",LocalDate.now()), "superAdmin");
             adminService.save(adminDTO);
         }
     }

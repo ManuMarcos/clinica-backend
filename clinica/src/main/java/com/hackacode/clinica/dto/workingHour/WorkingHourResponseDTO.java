@@ -13,7 +13,10 @@ import java.time.LocalTime;
 public class WorkingHourResponseDTO {
 
     private Long id;
+    @JsonProperty("day_of_week")
     private DayOfWeek dayOfWeek;
+    @JsonProperty("time_from")
     private LocalTime timeFrom;
+    @JsonProperty("time_to")
     private LocalTime timeTo;
 }

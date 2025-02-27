@@ -5,10 +5,9 @@ import lombok.*;
 
 import java.util.List;
 
-@Getter @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
+@AllArgsConstructor @NoArgsConstructor
+@Getter @Setter
 public class Speciality {
 
     @Id

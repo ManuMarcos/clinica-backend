@@ -15,7 +15,6 @@ public interface IUserMapper {
 
     UserResponseDTO toResponseDTO(User user);
 
-    @Mapping(target = "dni", source = "dni")
     User toEntity(UserRequestDTO userRequestDTO);
 
 }
