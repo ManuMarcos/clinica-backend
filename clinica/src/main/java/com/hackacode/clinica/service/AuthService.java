@@ -1,17 +1,15 @@
 package com.hackacode.clinica.service;
 
-import com.hackacode.clinica.dto.AccessTokenDTO;
-import com.hackacode.clinica.dto.LoginRequestDTO;
-import com.hackacode.clinica.dto.LoginResponseDTO;
-import com.hackacode.clinica.exception.BadRequestException;
+import com.hackacode.clinica.dto.authentication.AccessTokenDTO;
+import com.hackacode.clinica.dto.authentication.LoginRequestDTO;
+import com.hackacode.clinica.dto.authentication.LoginResponseDTO;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
-import com.hackacode.clinica.mapper.UserMapper;
+import com.hackacode.clinica.mapper.IUserMapper;
 import com.hackacode.clinica.model.*;
 import com.hackacode.clinica.repository.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,11 +30,11 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final IRefreshTokenRepository refreshTokenRepository;
-    private final UserMapper userMapper;
+    private final IUserMapper userMapper;
 
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.email(), loginRequestDTO.password()));
-        User user = userRepository.findByEmail(loginRequestDTO.email()).orElseThrow(
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
+        User user = userRepository.findByEmail(loginRequestDTO.getEmail()).orElseThrow(
                 () -> new UsernameNotFoundException("User not found")
         );
         refreshTokenRepository.revokeToken(user.getId());
@@ -53,7 +51,7 @@ public class AuthService {
         return LoginResponseDTO.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .user(userMapper.toDTO(user))
+                .user(userMapper.toResponseDTO(user))
                 .build();
     }
 
@@ -72,7 +70,7 @@ public class AuthService {
         String newAccessToken = jwtService.generateToken(user, user.getId());
         return AccessTokenDTO.builder()
                 .accessToken(newAccessToken)
-                .user(userMapper.toDTO(user))
+                .user(userMapper.toResponseDTO(user))
                 .build();
     }
 

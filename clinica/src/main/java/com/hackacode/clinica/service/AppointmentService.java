@@ -1,10 +1,14 @@
 package com.hackacode.clinica.service;
 
 import com.hackacode.clinica.dto.*;
+import com.hackacode.clinica.dto.appointment.AppointmentRequestDTO;
+import com.hackacode.clinica.dto.appointment.AppointmentResponseDTO;
+import com.hackacode.clinica.dto.appointment.AppointmentUpdateDTO;
 import com.hackacode.clinica.exception.BadRequestException;
 import com.hackacode.clinica.exception.ConflictException;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
-import com.hackacode.clinica.mapper.AppointmentMapper;
+import com.hackacode.clinica.mapper.IAppointmentMapper;
+import com.hackacode.clinica.mapper.IServiceMapper;
 import com.hackacode.clinica.model.*;
 import com.hackacode.clinica.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -28,50 +32,21 @@ public class AppointmentService implements IAppointmentService {
 
     private final IAppointmentRepository appointmentRepository;
     private final IServiceRepository serviceRepository;
-    private final IPatientRepository patientRepository;
+    private final IAppointmentMapper appointmentMapper;
+    private final ServiceService serviceService;
+    private final PatientService patientService;
+    private final DoctorService doctorService;
     private final IDoctorRepository doctorRepository;
-    private final AppointmentMapper appointmentMapper;
 
 
     @Override
     public Page<AppointmentResponseDTO> findAll(Pageable pageable) {
-        return appointmentRepository.findAll(pageable).map(appointmentMapper::toDTO);
+        return appointmentRepository.findAll(pageable).map(appointmentMapper::toResponseDTO);
     }
 
     @Override
     public AppointmentResponseDTO save(AppointmentRequestDTO appointmentRequestDTO) {
-        LocalDateTime startTime = appointmentRequestDTO.getDate().atTime(appointmentRequestDTO.getTime());
-        var service = serviceRepository.findById(appointmentRequestDTO.getServiceId()).orElseThrow(
-                () -> new ResourceNotFoundException("Service with id: " + appointmentRequestDTO.getServiceId()
-                        + "not found!"));
-        var patient = patientRepository.findById(appointmentRequestDTO.getPatientId()).orElseThrow(
-                () -> new ResourceNotFoundException("Patient with id: " + appointmentRequestDTO.getPatientId()
-                        + "not found!"));
-        var doctor = doctorRepository.findById(appointmentRequestDTO.getDoctorId()).orElseThrow(
-                () -> new ResourceNotFoundException("Doctor with id: " + appointmentRequestDTO.getDoctorId()
-                    + "not found!"));
-        if(!ifDoctorProvidesService(doctor, service)) {
-            throw new BadRequestException("The doctor with id: " + doctor.getId()
-                + "does not provide the service with id: " + service.getId());
-        }
-        if(!ifDoctorWorksThisDayAtTime(doctor, startTime)){
-            throw new BadRequestException("The doctor with id: " + doctor.getId()
-                + "does not work this day at time:" + startTime);
-        }
-        LocalDateTime endTime = startTime.plusMinutes(doctor.getAppointmentDuration());
-        if(appointmentRepository.existsBookedAppointment(doctor.getId(), startTime, endTime)){
-            throw new ConflictException("The appointment is already booked!");
-        };
-
-        var savedAppointment = appointmentRepository.save(Appointment.builder()
-                .service(service)
-                .doctor(doctor)
-                .patient(patient)
-                .status(AppointmentStatus.BOOKED)
-                .startTime(startTime)
-                .endTime(endTime)
-                .build());
-        return appointmentMapper.toDTO(savedAppointment);
+        return null;
     }
 
     @Override
@@ -81,7 +56,7 @@ public class AppointmentService implements IAppointmentService {
         for(Doctor doctor : doctors) {
             doctorAvailabilityDTOS.add(DoctorAvailabilityDTO.builder()
                     .doctorId(doctor.getId())
-                    .doctorName(doctor.getName() + " " + doctor.getSurname())
+                    .doctorName(doctor.getUser().getName() + " " + doctor.getUser().getSurname())
                     .doctorSpeciality(doctor.getSpeciality().getName())
                     .availableSlots(getAvailableTimesForDoctor(doctor, from, to))
                     .build());
@@ -98,13 +73,39 @@ public class AppointmentService implements IAppointmentService {
     }
 
     @Override
+    public AppointmentResponseDTO createAppointmentForService(Long serviceId, AppointmentRequestDTO appointmentRequestDTO) {
+        LocalDateTime startTime = appointmentRequestDTO.getDate().atTime(appointmentRequestDTO.getTime());
+        var service = serviceService.findById(serviceId);
+        var patient = patientService.findById(appointmentRequestDTO.getPatientId());
+        var doctor = doctorService.findById(appointmentRequestDTO.getDoctorId());
+        if(!doctorService.ifDoctorProvidesService(serviceId, doctor.getId())) {
+            throw new BadRequestException("The doctor with id: " + doctor.getId()
+                    + " does not provide the service with id: " + service.getId());
+        }
+        LocalDateTime endTime = startTime.plusMinutes(doctor.getAppointmentDuration());
+        if(!doctorService.ifDoctorWorksThisDayAtTime(doctor.getId(),startTime, endTime)) {
+            throw new BadRequestException("The doctor with id: " + doctor.getId()
+                    + " does not work this day at time:" + startTime);
+        }
+        if(appointmentRepository.existsBookedAppointment(doctor.getId(), startTime, endTime)){
+            throw new ConflictException("The appointment is already booked!");
+        };
+        var appointment = appointmentMapper.toEntity(appointmentRequestDTO);
+        appointment.setStartTime(startTime);
+        appointment.setEndTime(endTime);
+        appointment.setStatus(AppointmentStatus.BOOKED);
+        appointment.setService(serviceRepository.findById(serviceId).get());
+        return appointmentMapper.toResponseDTO(appointmentRepository.save(appointment));
+    }
+
+    @Override
     public AppointmentResponseDTO update(Long appoitmentId, AppointmentUpdateDTO appointmentUpdateDTO) {
         Appointment appointment = this.getById(appoitmentId);
         if(appointmentUpdateDTO.getStatus() != null){
             appointment.setStatus(appointmentUpdateDTO.getStatus());
         }
         appointmentRepository.save(appointment);
-        return appointmentMapper.toDTO(appointment);
+        return appointmentMapper.toResponseDTO(appointment);
     }
 
     @Override

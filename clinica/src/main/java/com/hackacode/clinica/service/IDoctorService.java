@@ -1,8 +1,9 @@
 package com.hackacode.clinica.service;
 
-import com.hackacode.clinica.dto.DoctorDTO;
 import com.hackacode.clinica.dto.ServiceToDoctorRequestDTO;
-import com.hackacode.clinica.dto.WorkingHourDTO;
+import com.hackacode.clinica.dto.doctor.DoctorRequestDTO;
+import com.hackacode.clinica.dto.doctor.DoctorResponseDTO;
+import com.hackacode.clinica.dto.workingHour.WorkingHourRequestDTO;
 import com.hackacode.clinica.model.Doctor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,15 +13,16 @@ import java.util.List;
 
 public interface IDoctorService {
 
-    DoctorDTO save(DoctorDTO doctorDTO);
-    DoctorDTO findById(Long id);
-    DoctorDTO update(Doctor doctor);
+    DoctorResponseDTO save(DoctorRequestDTO doctorRequestDTO);
+    DoctorResponseDTO findById(Long id);
+    DoctorResponseDTO update(DoctorRequestDTO doctorRequestDTO);
     void deleteById(Long id);
-    Page<DoctorDTO> findAll(Pageable pageable);
-    void addWorkingHour(Long doctorId, WorkingHourDTO workingHourDTO);
+    Page<DoctorResponseDTO> findAll(String name, Long specialityId, Pageable pageable);
+    void addWorkingHour(Long doctorId, WorkingHourRequestDTO workingHourRequestDTO);
     void deleteWorkingHour(Long doctorId, Long workingHourId);
-    List<Doctor> findAvailableDoctors(LocalDateTime start, LocalDateTime end, Long serviceId);
-    void addService(Long doctorId, ServiceToDoctorRequestDTO serviceToDoctorRequestDTO);
+    List<DoctorResponseDTO> findAvailableDoctors(LocalDateTime start, LocalDateTime end, Long serviceId);
+    void addService(Long doctorId, Long serviceId);
     void removeService(Long doctorId, Long serviceId);
-    Page<DoctorDTO> search(String name, Long specialityId, Pageable pageable);
+    boolean ifDoctorProvidesService(Long doctorId, Long serviceId);
+    boolean ifDoctorWorksThisDayAtTime(Long doctorId, LocalDateTime timeFrom, LocalDateTime timeTo);
 }

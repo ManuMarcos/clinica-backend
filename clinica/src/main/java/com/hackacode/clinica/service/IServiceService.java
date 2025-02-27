@@ -1,16 +1,16 @@
 package com.hackacode.clinica.service;
 
-import com.hackacode.clinica.dto.DoctorAvailabilityDTO;
-import com.hackacode.clinica.dto.ServiceDTO;
+import com.hackacode.clinica.dto.service.ServiceRequestDTO;
+import com.hackacode.clinica.dto.service.ServiceResponseDTO;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface IServiceService {
 
-    ServiceDTO save(ServiceDTO serviceDTO);
-    List<ServiceDTO> findAll(Pageable pageable);
-    ServiceDTO findById(Long id);
+    ServiceResponseDTO save(ServiceRequestDTO serviceDTO);
+    List<ServiceResponseDTO> findAll(Pageable pageable);
+    ServiceResponseDTO findById(Long id);
     void delete(Long id);
     boolean existsById(Long id);
 }

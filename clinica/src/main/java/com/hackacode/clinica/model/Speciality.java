@@ -5,17 +5,15 @@ import lombok.*;
 
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Entity
+@AllArgsConstructor @NoArgsConstructor
+@Getter @Setter
 public class Speciality {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "speciality_id")
-    private Long specialityId;
+    private Long id;
+
     private String name;
 
 }

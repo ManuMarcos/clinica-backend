@@ -10,13 +10,10 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
-@Data
-@SuperBuilder
+@Getter @Setter
 @RequiredArgsConstructor
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @AllArgsConstructor
-@Table(name = "users")
 public class User implements UserDetails {
 
     @Id
@@ -32,7 +29,7 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String dni;
 
-    @Column(name = "birth_date", nullable = false)
+    @Column(name = "birth_date", nullable = true)
     private LocalDate birthDate;
 
     @Column(unique = true, nullable = false)
@@ -61,7 +58,7 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password; // Retorna la contraseña del usuario
+        return password;
     }
 
     @Override

@@ -1,8 +1,7 @@
 package com.hackacode.clinica.controller;
 
-import com.hackacode.clinica.dto.PackageDTO;
+import com.hackacode.clinica.dto.servicePackage.PackageDTO;
 import com.hackacode.clinica.service.IPackageService;
-import com.hackacode.clinica.service.PackageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

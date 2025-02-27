@@ -1,7 +1,6 @@
 package com.hackacode.clinica.repository;
 
 import com.hackacode.clinica.model.Doctor;
-import com.hackacode.clinica.model.Speciality;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -29,9 +27,19 @@ public interface IDoctorRepository extends JpaRepository<Doctor, Long> {
                                       @Param("startTime") LocalDateTime startTime,
                                       @Param("endTime") LocalDateTime endTime);
     List<Doctor> findByServices_id(Long serviceId);
-    Page<Doctor> findBySpeciality_specialityId(Long specialityId, Pageable pageable);
-    Page<Doctor> findByNameContaining(String name, Pageable pageable);
-    Page<Doctor> findBySpeciality_specialityIdAndNameContaining(Long speciality_specialityId, String name, Pageable pageable);
-    Page<Doctor> findByNameContainingIgnoreCaseOrSpeciality_specialityId(String name, Long specialityId, Pageable pageable);
-    boolean existsBySpeciality_specialityId(Long specialityId);
+    Page<Doctor> findBySpecialityId(Long specialityId, Pageable pageable);
+    Page<Doctor> findByUser_NameContainingIgnoreCase(String name, Pageable pageable);
+    Page<Doctor> findBySpecialityIdAndUser_NameContaining(Long speciality_specialityId, String name, Pageable pageable);
+    Page<Doctor> findByUser_NameContainingIgnoreCaseOrSpecialityId(String name, Long specialityId, Pageable pageable);
+    boolean existsBySpecialityId(Long specialityId);
+    boolean existsByIdAndServicesId(Long doctorId,Long serviceId);
+    @Query("SELECT CASE WHEN COUNT(wh) > 0 THEN true ELSE false END " +
+            "FROM WorkingHour wh WHERE wh.doctor.id = :doctorId " +
+            "AND wh.dayOfWeek = :dayOfWeek " +
+            "AND :timeFrom >= wh.timeFrom AND :timeFrom < wh.timeTo " +
+            "AND :timeTo > wh.timeFrom AND :timeTo <= wh.timeTo")
+    boolean ifDoctorWorksThisDayAtTime(@Param("doctorId") Long doctorId,
+                                       @Param("dayOfWeek") DayOfWeek dayOfWeek,
+                                       @Param("timeFrom") LocalTime timeFrom,
+                                       @Param("timeTo") LocalTime timeTo);
 }

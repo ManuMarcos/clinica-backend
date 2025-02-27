@@ -1,9 +1,9 @@
 package com.hackacode.clinica.controller;
 
 
-import com.hackacode.clinica.dto.AdminDTO;
 import com.hackacode.clinica.dto.PaginatedResponseDTO;
-import com.hackacode.clinica.model.Role;
+import com.hackacode.clinica.dto.admin.AdminRequestDTO;
+import com.hackacode.clinica.dto.admin.AdminResponseDTO;
 import com.hackacode.clinica.service.AdminService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -24,12 +24,12 @@ public class AdminController {
     private final AdminService adminService;
 
     @PostMapping
-    public ResponseEntity<AdminDTO> create(@Valid @RequestBody AdminDTO adminDTO) {
-        return new ResponseEntity<>(adminService.save(adminDTO), HttpStatus.CREATED);
+    public ResponseEntity<AdminResponseDTO> create(@Valid @RequestBody AdminRequestDTO adminRequestDTO) {
+        return new ResponseEntity<>(adminService.save(adminRequestDTO), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<PaginatedResponseDTO<AdminDTO>> getAll(Pageable pageable) {
+    public ResponseEntity<PaginatedResponseDTO<AdminResponseDTO>> getAll(Pageable pageable) {
         return ResponseEntity.ok(PaginatedResponseDTO.fromPage(adminService.findAll(pageable)));
     }
 

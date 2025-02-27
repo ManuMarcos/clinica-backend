@@ -1,5 +1,7 @@
 package com.hackacode.clinica.config;
-import com.hackacode.clinica.dto.AdminDTO;
+import com.hackacode.clinica.dto.admin.AdminRequestDTO;
+import com.hackacode.clinica.dto.user.UserRequestDTO;
+import com.hackacode.clinica.model.Role;
 import com.hackacode.clinica.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -16,15 +18,8 @@ public class AdminInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if(!adminService.existsAdmin()){
-            var adminDTO = AdminDTO.builder()
-                    .name("defaultAdmin")
-                    .surname("defaultAdmin")
-                    .dni("00000000")
-                    .email("defaultadmin@clinica.com")
-                    .password("admin")
-                    .birthDate(LocalDate.now())
-                    .position("defaultAdmin")
-                    .build();
+            var adminDTO = new AdminRequestDTO(new UserRequestDTO("admin","defaultAdmin",
+                    "defaultadmin@clinica.com", "admin", "41915027",LocalDate.now()), "superAdmin");
             adminService.save(adminDTO);
         }
     }

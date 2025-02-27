@@ -10,7 +10,7 @@ public class Invoice {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long invoiceId;
+    private Long id;
     private LocalDateTime issueDate;
     private LocalDateTime paymentDate;
 

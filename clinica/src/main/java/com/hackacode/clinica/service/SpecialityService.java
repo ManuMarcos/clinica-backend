@@ -1,9 +1,10 @@
 package com.hackacode.clinica.service;
 
-import com.hackacode.clinica.dto.SpecialityRequestDTO;
-import com.hackacode.clinica.dto.SpecialityResponseDTO;
+import com.hackacode.clinica.dto.speciality.SpecialityRequestDTO;
+import com.hackacode.clinica.dto.speciality.SpecialityResponseDTO;
 import com.hackacode.clinica.exception.BadRequestException;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
+import com.hackacode.clinica.mapper.ISpecialityMapper;
 import com.hackacode.clinica.model.Speciality;
 import com.hackacode.clinica.repository.IDoctorRepository;
 import com.hackacode.clinica.repository.ISpecialityRepository;
@@ -13,37 +14,27 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class SpecialityService implements ISpecialityService {
 
     private final ISpecialityRepository specialityRepository;
     private final IDoctorRepository doctorRepository;
+    private final ISpecialityMapper specialityMapper;
 
     @Override
     public SpecialityResponseDTO save(SpecialityRequestDTO specialityRequestDTO) {
-        Speciality speciality = specialityRepository.save(Speciality.builder()
-                .name(specialityRequestDTO.getName())
-                .build());
-        return SpecialityResponseDTO.builder()
-                .id(speciality.getSpecialityId())
-                .name(speciality.getName())
-                .build();
+        if(specialityRepository.existsByName(specialityRequestDTO.getName())){
+            throw new BadRequestException("The speciality already exists");
+        }
+        Speciality speciality = specialityRepository.save(specialityMapper.toEntity(specialityRequestDTO));
+        return specialityMapper.toResponseDTO(speciality);
     }
 
     @Override
     public Page<SpecialityResponseDTO> findAll(Pageable pageable) {
         var specialities = specialityRepository.findAll();
-        var specialitiesDTO = new ArrayList<SpecialityResponseDTO>();
-        for (Speciality speciality : specialities) {
-            specialitiesDTO.add(SpecialityResponseDTO.builder()
-                    .id(speciality.getSpecialityId())
-                    .name(speciality.getName())
-                    .build());
-        }
+        var specialitiesDTO = specialities.stream().map(specialityMapper::toResponseDTO).toList();
         return new PageImpl<>(specialitiesDTO, pageable, specialitiesDTO.size());
     }
 
@@ -51,17 +42,13 @@ public class SpecialityService implements ISpecialityService {
     public SpecialityResponseDTO update(Long id, SpecialityRequestDTO specialityRequestDTO) {
         var speciality = this.getById(id);
         speciality.setName(specialityRequestDTO.getName());
-        var updatedSpeciality = specialityRepository.save(speciality);
-        return SpecialityResponseDTO.builder()
-                .id(updatedSpeciality.getSpecialityId())
-                .name(updatedSpeciality.getName())
-                .build();
+        return specialityMapper.toResponseDTO(specialityRepository.save(speciality));
     }
 
 
     @Override
     public void delete(Long id) {
-        if(doctorRepository.existsBySpeciality_specialityId(id)){
+        if(doctorRepository.existsBySpecialityId(id)){
             throw new BadRequestException("No se puede eliminar la especialidad porque existen doctores que " +
                     "pertenecen a la misma");
         }
@@ -71,10 +58,7 @@ public class SpecialityService implements ISpecialityService {
     @Override
     public SpecialityResponseDTO findById(Long id) {
         var speciality = this.getById(id);
-        return SpecialityResponseDTO.builder()
-                .name(speciality.getName())
-                .id(speciality.getSpecialityId())
-                .build();
+        return specialityMapper.toResponseDTO(speciality);
     }
 
     private Speciality getById(Long id) {

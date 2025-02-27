@@ -1,11 +1,9 @@
 package com.hackacode.clinica.service;
 
-import com.hackacode.clinica.dto.SpecialityRequestDTO;
-import com.hackacode.clinica.dto.SpecialityResponseDTO;
+import com.hackacode.clinica.dto.speciality.SpecialityRequestDTO;
+import com.hackacode.clinica.dto.speciality.SpecialityResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 
 public interface ISpecialityService {
 

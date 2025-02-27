@@ -12,7 +12,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @OpenAPIDefinition(info = @Info(title = "Medpoint Clinic",
 		version = "1.0.0",
-		description = "APIs Swagger Microservicio MedPoint"
+		description = "APIs Swagger MedPoint Clinic - Hackacode project from TodoCode",
+		contact = @Contact(name = "Manuel Marcos", url = "https://manumarcos.com.ar"
+		, email = "manuelignaciomarcos@hotmail.com")
 ))
 @SpringBootApplication
 
@@ -24,6 +26,7 @@ public class ClinicaApplication {
 
 	@PostConstruct
 	public void logEnvVariables() {
+		//Imprimo las variables de entorno para ver si estan bien configuradas
 		System.out.println("JWT_SECRET: " + System.getenv("JWT_SECRET"));
 		System.out.println("DB URL: " + System.getenv("DB_URL"));
 		System.out.println("DB NAME: " + System.getenv("DB_NAME"));

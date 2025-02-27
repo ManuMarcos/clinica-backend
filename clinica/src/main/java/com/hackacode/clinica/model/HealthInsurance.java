@@ -11,8 +11,7 @@ public class HealthInsurance {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "health_insurance_id")
-    private Long healthInsuranceId;
+    private Long id;
     private String name;
     private String plan;
     private String number;

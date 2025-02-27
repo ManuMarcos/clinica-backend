@@ -9,7 +9,6 @@ import java.util.List;
 
 @Entity
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-@Builder
 public class Package {
 
     @Id
@@ -26,12 +25,7 @@ public class Package {
             inverseJoinColumns = @JoinColumn(name = "service_id")
     )
     private List<Service> services = new ArrayList<>();
-
-
-    public Double calculatePrice() {
-        return 0.0;
-    }
-
+    
     public void addService(Service service) {
         this.services.add(service);
     }

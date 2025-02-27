@@ -13,8 +13,7 @@ public class WorkingHour {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "working_hour_id")
-    private Long workingHourId;
+    private Long id;
     @Column(name = "day_of_week")
     private DayOfWeek dayOfWeek;
     @Column(name = "time_from")
