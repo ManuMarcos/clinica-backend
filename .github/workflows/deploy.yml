@@ -58,7 +58,7 @@ jobs:
           sudo docker-compose -f ClinicaApp/clinica-backend/docker-compose.yml down
           
           # Extraer la última imagen del contenedor
-          sudo docker pull clinica-backend:latest
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/clinica-backend:latest
           
           # Subir y ejecutar el contenedor nuevo
           sudo docker-compose -f ClinicaApp/clinica-backend/docker-compose.yml up -d
