@@ -38,7 +38,11 @@ jobs:
       run: |
          docker build -t clinica-backend:latest -f ./clinica/Dockerfile ./clinica
 
-    
+    # Paso 5: Subir la imagen Docker a Docker Hub
+    - name: Push Docker image to Docker Hub
+      run: |
+        docker tag clinica-backend:latest ${{ secrets.DOCKER_USERNAME }}/clinica-backend:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/clinica-backend:latest
 
     # Paso 6: Conectar y desplegar en la máquina virtual de Azure
     - name: SSH to Azure VM and deploy
