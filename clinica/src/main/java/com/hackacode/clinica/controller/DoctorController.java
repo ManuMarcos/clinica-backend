@@ -1,8 +1,7 @@
 package com.hackacode.clinica.controller;
 
 
-import com.hackacode.clinica.dto.PaginatedResponseDTO;
-import com.hackacode.clinica.dto.ServiceToDoctorRequestDTO;
+import com.hackacode.clinica.dto.page.PaginatedResponseDTO;
 import com.hackacode.clinica.dto.doctor.DoctorRequestDTO;
 import com.hackacode.clinica.dto.doctor.DoctorResponseDTO;
 import com.hackacode.clinica.dto.workingHour.WorkingHourRequestDTO;
@@ -12,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

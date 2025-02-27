@@ -50,12 +50,5 @@ public class ServiceController {
         return ResponseEntity.ok("Service deleted successfully.");
     }
 
-    @PostMapping("/{serviceId}/appointments")
-    public ResponseEntity<AppointmentResponseDTO> addAppointment(@PathVariable Long serviceId,
-                                                                 @RequestBody @Valid AppointmentRequestDTO appointmentRequestDTO) {
-        return new ResponseEntity<>(appointmentService.createAppointmentForService(serviceId,appointmentRequestDTO), HttpStatus.CREATED);
-    }
-
-
-
+    
 }

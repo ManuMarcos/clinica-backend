@@ -4,6 +4,7 @@ import com.hackacode.clinica.dto.*;
 import com.hackacode.clinica.dto.appointment.AppointmentRequestDTO;
 import com.hackacode.clinica.dto.appointment.AppointmentResponseDTO;
 import com.hackacode.clinica.dto.appointment.AppointmentUpdateDTO;
+import com.hackacode.clinica.dto.page.PaginatedResponseDTO;
 import com.hackacode.clinica.service.AppointmentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ import java.util.List;
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
-
+    
     @GetMapping
     public ResponseEntity<PaginatedResponseDTO<AppointmentResponseDTO>> getAllAppointments(Pageable pageable) {
         return ResponseEntity.ok(PaginatedResponseDTO.fromPage(appointmentService.findAll(pageable)));

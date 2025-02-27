@@ -46,7 +46,30 @@ public class AppointmentService implements IAppointmentService {
 
     @Override
     public AppointmentResponseDTO save(AppointmentRequestDTO appointmentRequestDTO) {
-        return null;
+        LocalDateTime startTime = appointmentRequestDTO.getDate().atTime(appointmentRequestDTO.getTime());
+        var service = serviceService.getServiceEntityById(appointmentRequestDTO.getServiceId());
+        var patient = patientService.getPatientById(appointmentRequestDTO.getPatientId());
+        var doctor = doctorService.getDoctorById(appointmentRequestDTO.getDoctorId());
+        if(!doctorService.ifDoctorProvidesService(appointmentRequestDTO.getServiceId(), doctor.getId())) {
+            throw new BadRequestException("The doctor with id: " + doctor.getId()
+                    + " does not provide the service with id: " + service.getId());
+        }
+        LocalDateTime endTime = startTime.plusMinutes(doctor.getAppointmentDuration());
+        if(!doctorService.ifDoctorWorksThisDayAtTime(doctor.getId(),startTime, endTime)) {
+            throw new BadRequestException("The doctor with id: " + doctor.getId()
+                    + " does not work this day at time:" + startTime);
+        }
+        if(appointmentRepository.existsBookedAppointment(doctor.getId(), startTime, endTime)){
+            throw new ConflictException("The appointment is already booked!");
+        };
+        var appointment = appointmentMapper.toEntity(appointmentRequestDTO);
+        appointment.setPatient(patient);
+        appointment.setService(service);
+        appointment.setDoctor(doctor);
+        appointment.setStartTime(startTime);
+        appointment.setEndTime(endTime);
+        appointment.setStatus(AppointmentStatus.BOOKED);
+        return appointmentMapper.toResponseDTO(appointmentRepository.save(appointment));
     }
 
     @Override
@@ -72,37 +95,17 @@ public class AppointmentService implements IAppointmentService {
         appointmentRepository.deleteById(id);
     }
 
-    @Override
-    public AppointmentResponseDTO createAppointmentForService(Long serviceId, AppointmentRequestDTO appointmentRequestDTO) {
-        LocalDateTime startTime = appointmentRequestDTO.getDate().atTime(appointmentRequestDTO.getTime());
-        var service = serviceService.findById(serviceId);
-        var patient = patientService.findById(appointmentRequestDTO.getPatientId());
-        var doctor = doctorService.findById(appointmentRequestDTO.getDoctorId());
-        if(!doctorService.ifDoctorProvidesService(serviceId, doctor.getId())) {
-            throw new BadRequestException("The doctor with id: " + doctor.getId()
-                    + " does not provide the service with id: " + service.getId());
-        }
-        LocalDateTime endTime = startTime.plusMinutes(doctor.getAppointmentDuration());
-        if(!doctorService.ifDoctorWorksThisDayAtTime(doctor.getId(),startTime, endTime)) {
-            throw new BadRequestException("The doctor with id: " + doctor.getId()
-                    + " does not work this day at time:" + startTime);
-        }
-        if(appointmentRepository.existsBookedAppointment(doctor.getId(), startTime, endTime)){
-            throw new ConflictException("The appointment is already booked!");
-        };
-        var appointment = appointmentMapper.toEntity(appointmentRequestDTO);
-        appointment.setStartTime(startTime);
-        appointment.setEndTime(endTime);
-        appointment.setStatus(AppointmentStatus.BOOKED);
-        appointment.setService(serviceRepository.findById(serviceId).get());
-        return appointmentMapper.toResponseDTO(appointmentRepository.save(appointment));
-    }
 
     @Override
     public AppointmentResponseDTO update(Long appoitmentId, AppointmentUpdateDTO appointmentUpdateDTO) {
         Appointment appointment = this.getById(appoitmentId);
-        if(appointmentUpdateDTO.getStatus() != null){
-            appointment.setStatus(appointmentUpdateDTO.getStatus());
+        if(appointment.getStatus() == AppointmentStatus.CANCELLED){
+            throw new BadRequestException("Cannot modify a cancelled appointment");
+        }
+        //TODO: Generar la factura cuando se pasa a estado COMPLETED
+        appointment.setStatus(appointmentUpdateDTO.getStatus());
+        if(appointmentUpdateDTO.getComments() != null){
+            appointment.setComments(appointmentUpdateDTO.getComments());
         }
         appointmentRepository.save(appointment);
         return appointmentMapper.toResponseDTO(appointment);

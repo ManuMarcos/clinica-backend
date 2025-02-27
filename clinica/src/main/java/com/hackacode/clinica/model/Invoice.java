@@ -13,8 +13,10 @@ public class Invoice {
     private Long id;
     private LocalDateTime issueDate;
     private LocalDateTime paymentDate;
+    @ManyToOne
+    private Patient patient;
 
-    @OneToMany
-    private List<Consultation> consultations;
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
+    private List<InvoiceItem> items;
 
 }

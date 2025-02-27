@@ -25,4 +25,5 @@ public interface IDoctorService {
     void removeService(Long doctorId, Long serviceId);
     boolean ifDoctorProvidesService(Long doctorId, Long serviceId);
     boolean ifDoctorWorksThisDayAtTime(Long doctorId, LocalDateTime timeFrom, LocalDateTime timeTo);
+    Doctor getDoctorById(Long id);
 }

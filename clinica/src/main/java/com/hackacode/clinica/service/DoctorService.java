@@ -164,7 +164,7 @@ public class DoctorService implements IDoctorService {
     public void deleteById(Long id) {
     }
 
-    private Doctor getDoctorById(Long id) {
+    public Doctor getDoctorById(Long id) {
         return doctorRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Doctor with ID " + id + " does not exist"));
     }

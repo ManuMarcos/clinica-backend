@@ -2,6 +2,7 @@ package com.hackacode.clinica.service;
 
 import com.hackacode.clinica.dto.patient.PatientRequestDTO;
 import com.hackacode.clinica.dto.patient.PatientResponseDTO;
+import com.hackacode.clinica.model.Patient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,4 +12,5 @@ public interface IPatientService {
     PatientResponseDTO findById(Long id);
     PatientResponseDTO update(PatientRequestDTO patientRequestDTO);
     void deleteById(Long id);
+    Patient getPatientById(Long id);
 }

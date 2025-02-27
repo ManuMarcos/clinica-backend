@@ -2,6 +2,7 @@ package com.hackacode.clinica.service;
 
 import com.hackacode.clinica.dto.service.ServiceRequestDTO;
 import com.hackacode.clinica.dto.service.ServiceResponseDTO;
+import com.hackacode.clinica.model.Service;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface IServiceService {
     ServiceResponseDTO findById(Long id);
     void delete(Long id);
     boolean existsById(Long id);
+    Service getServiceEntityById(Long id);
 }

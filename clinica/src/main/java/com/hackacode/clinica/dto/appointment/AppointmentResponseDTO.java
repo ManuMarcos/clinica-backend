@@ -26,4 +26,5 @@ public class AppointmentResponseDTO {
     private String serviceName;
     @JsonProperty("service_code")
     private String serviceCode;
+    private String comments;
 }

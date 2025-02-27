@@ -40,12 +40,10 @@ public class Doctor {
     private List<Service> services = new ArrayList<>();
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
     private List<WorkingHour> workingHours = new ArrayList<>();
 
 
     @OneToMany(mappedBy = "doctor",cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
     private List<Appointment> appointments = new ArrayList<>();
 
     public void addWorkingHour(WorkingHour workingHour) {

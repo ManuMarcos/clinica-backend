@@ -13,12 +13,11 @@ import java.time.LocalTime;
 public class AppointmentRequestDTO {
 
     private LocalDate date;
-
     private LocalTime time;
-
     @JsonProperty("patient_id")
     private Long patientId;
-
+    @JsonProperty("service_id")
+    private Long serviceId;
     @JsonProperty("doctor_id")
     private Long doctorId;
 }

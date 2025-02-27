@@ -1,4 +1,4 @@
-package com.hackacode.clinica.dto;
+package com.hackacode.clinica.dto.page;
 
 import lombok.Builder;
 import lombok.Getter;

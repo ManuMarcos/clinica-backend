@@ -5,6 +5,7 @@ import com.hackacode.clinica.dto.patient.PatientResponseDTO;
 import com.hackacode.clinica.dto.user.UserRequestDTO;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
 import com.hackacode.clinica.mapper.IPatientMapper;
+import com.hackacode.clinica.model.Patient;
 import com.hackacode.clinica.model.Role;
 import com.hackacode.clinica.repository.IPatientRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,10 +43,7 @@ public class PatientService implements IPatientService {
 
     @Override
     public PatientResponseDTO findById(Long id) {
-        var patient =  patientRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Patient not found with id " + id)
-        );
-        return patientMapper.toResponseDTO(patient);
+        return patientMapper.toResponseDTO(getPatientById(id));
     }
 
     @Override
@@ -55,10 +53,14 @@ public class PatientService implements IPatientService {
 
     @Override
     public void deleteById(Long id) {
-        var patient = patientRepository.findById(id).orElseThrow(
+        patientRepository.delete(getPatientById(id));
+    }
+
+    @Override
+    public Patient getPatientById(Long id) {
+        return patientRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Patient not found with id " + id)
         );
-        patientRepository.delete(patient);
     }
 
 

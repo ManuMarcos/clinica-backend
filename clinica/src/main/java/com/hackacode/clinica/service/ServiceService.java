@@ -36,9 +36,7 @@ public class ServiceService implements IServiceService {
 
     @Override
     public ServiceResponseDTO findById(Long id) {
-        var service = serviceRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Service not found with id: " + id)
-        );
+        var service = this.getServiceEntityById(id);
         return serviceMapper.toResponseDTO(service);
     }
 
@@ -59,6 +57,13 @@ public class ServiceService implements IServiceService {
     @Override
     public boolean existsById(Long id) {
         return serviceRepository.existsById(id);
+    }
+
+    @Override
+    public Service getServiceEntityById(Long id) {
+        return serviceRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Service not found with id: " + id)
+        );
     }
 
 

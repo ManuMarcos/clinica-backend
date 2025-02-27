@@ -1,6 +1,6 @@
 package com.hackacode.clinica.controller;
 
-import com.hackacode.clinica.dto.PaginatedResponseDTO;
+import com.hackacode.clinica.dto.page.PaginatedResponseDTO;
 import com.hackacode.clinica.dto.patient.PatientRequestDTO;
 import com.hackacode.clinica.dto.patient.PatientResponseDTO;
 import com.hackacode.clinica.service.IPatientService;
