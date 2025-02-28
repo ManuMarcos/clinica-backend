@@ -12,4 +12,5 @@ public interface IUserService {
     Page<UserResponseDTO> findAll(Pageable pageable);
     UserResponseDTO findById(Long id);
     void validateUniqueConstraints(UserRequestDTO userRequestDTO);
+    void createDefaultUser();
 }

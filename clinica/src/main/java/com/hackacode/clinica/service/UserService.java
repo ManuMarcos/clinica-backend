@@ -60,6 +60,19 @@ public class UserService implements IUserService {
         }
     }
 
+    @Override
+    public void createDefaultUser() {
+        if (userRepository.findByEmail("admin@hackacode.com").isEmpty()){
+        User user = new User();
+        user.setName("admin");
+        user.setSurname("admin");
+        user.setEmail("admin@hackacode.com");
+        user.setPassword(passwordEncoder.encode("admin"));
+        user.setRole(Role.ADMIN);
+        user.setDni("0000000");
+        userRepository.save(user);}
+    }
+
     private User getById(Long id) {
         return userRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("User with id " + id + " does not exist")

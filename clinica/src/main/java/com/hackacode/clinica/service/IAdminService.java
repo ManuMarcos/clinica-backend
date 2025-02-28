@@ -10,4 +10,5 @@ public interface IAdminService {
     AdminResponseDTO save(AdminRequestDTO adminRequestDTO);
     Page<AdminResponseDTO> findAll(Pageable pageable);
     boolean existsAdmin();
+
 }

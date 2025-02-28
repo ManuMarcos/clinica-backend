@@ -3,6 +3,7 @@ import com.hackacode.clinica.dto.admin.AdminRequestDTO;
 import com.hackacode.clinica.dto.user.UserRequestDTO;
 import com.hackacode.clinica.model.Role;
 import com.hackacode.clinica.service.AdminService;
+import com.hackacode.clinica.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -13,14 +14,10 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class AdminInitializer implements CommandLineRunner {
 
-    private final AdminService adminService;
+    private final UserService userService;
 
     @Override
     public void run(String... args) throws Exception {
-        if(!adminService.existsAdmin()){
-            var adminDTO = new AdminRequestDTO(new UserRequestDTO("admin","defaultAdmin",
-                    "defaultadmin@clinica.com", "admin", "41915027",LocalDate.now()), "superAdmin");
-            adminService.save(adminDTO);
-        }
+        userService.createDefaultUser();
     }
 }
