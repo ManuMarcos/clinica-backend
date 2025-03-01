@@ -9,19 +9,29 @@ import com.hackacode.clinica.exception.BadRequestException;
 import com.hackacode.clinica.exception.ConflictException;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
 import com.hackacode.clinica.mapper.IAppointmentMapper;
-import com.hackacode.clinica.mapper.IServiceMapper;
+
 import com.hackacode.clinica.model.*;
 import com.hackacode.clinica.repository.*;
+import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -39,6 +49,9 @@ public class AppointmentService implements IAppointmentService {
     private final DoctorService doctorService;
     private final IInvoiceService invoiceService;
     private final IDoctorRepository doctorRepository;
+    private final EmailService emailService;
+
+
 
 
     @Override
@@ -47,6 +60,7 @@ public class AppointmentService implements IAppointmentService {
     }
 
     @Override
+    @Transactional
     public AppointmentResponseDTO save(AppointmentRequestDTO appointmentRequestDTO) {
         LocalDateTime startTime = appointmentRequestDTO.getDate().atTime(appointmentRequestDTO.getTime());
         LocalDateTime endTime = startTime.plusMinutes(AppConstants.APPOINTMENT_DURATION_MINUTES);
@@ -70,6 +84,8 @@ public class AppointmentService implements IAppointmentService {
         appointment.setEndTime(endTime);
         appointment.setStatus(AppointmentStatus.BOOKED);
         appointment.setInvoice(invoice);
+
+        //sendAppointmentMail(appointment);
         return appointmentMapper.toResponseDTO(appointmentRepository.save(appointment));
     }
 
@@ -100,6 +116,31 @@ public class AppointmentService implements IAppointmentService {
             this.getById(id);
         }
         appointmentRepository.deleteById(id);
+    }
+
+    public byte[] exportAppointmentToPDF(Long appointmentId) {
+        Appointment appointment = this.getById(appointmentId);
+        User patientInfo = appointment.getPatient().getUser();
+        User doctorInfo = appointment.getDoctor().getUser();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        try{
+            PdfWriter writer = new PdfWriter(baos);
+            PdfDocument pdfDocument =  new PdfDocument(writer);
+            Document document = new Document(pdfDocument);
+            document.add(new Paragraph("Comprobante de Turno"));
+            document.add(new Paragraph("Id: " + appointmentId));
+            document.add(new Paragraph("Paciente: " + patientInfo.getName() + " " +
+                    patientInfo.getSurname()));
+            document.add(new Paragraph("Doctor: " + doctorInfo.getName() + " " + doctorInfo.getSurname()));
+            document.add(new Paragraph("Servicio: " + appointment.getService().getName()));
+            DateTimeFormatter formatter  = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            document.add(new Paragraph("Fecha: " + appointment.getStartTime().format(formatter)));
+            document.close();
+        } catch (Exception e){
+            throw new InternalError(e.getMessage());
+        }
+        return baos.toByteArray();
     }
 
 
@@ -200,6 +241,15 @@ public class AppointmentService implements IAppointmentService {
                 ) && appointment.getEndTime().equals(endTime))) && appointment.getStatus().equals(AppointmentStatus.BOOKED))) {
             throw new BadRequestException("The patient is not available!.");
         }
+    }
+
+    private void sendAppointmentMail(Appointment appointment) {
+        String message = String.format("Se te agendo un turno de %s para el dia %te-%<tm-%<tY a las %<tR con el " +
+                "médico %s", appointment.getService().getName(), appointment.getStartTime(),
+                appointment.getDoctor().getUser().getName());
+        String subject = "Se te asigno un turno en medpointClinic";
+        String to = appointment.getPatient().getUser().getEmail();
+        emailService.sendSimpleMessage(to, subject, message);
     }
 
 

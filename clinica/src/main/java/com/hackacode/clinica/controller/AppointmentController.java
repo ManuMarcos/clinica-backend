@@ -8,8 +8,12 @@ import com.hackacode.clinica.dto.page.PaginatedResponseDTO;
 import com.hackacode.clinica.service.AppointmentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,5 +57,14 @@ public class AppointmentController {
         return new ResponseEntity<>(appointmentService.update(appointmentId, appointmentUpdateDTO), HttpStatus.OK);
     }
 
+    @GetMapping("/{appointmentId}/export-pdf")
+    public ResponseEntity<ByteArrayResource> exportPdf(@PathVariable Long appointmentId) {
+        byte[] pdfBytes = appointmentService.exportAppointmentToPDF(appointmentId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("filename", String.format("comprobante-turno%d.pdf", appointmentId));
+        return ResponseEntity.ok().headers(headers).body(new ByteArrayResource(pdfBytes));
+
+    }
 
 }
