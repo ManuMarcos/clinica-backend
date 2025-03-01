@@ -28,8 +28,6 @@ public class Doctor {
     @Column(precision = 10, scale = 2)
     private BigDecimal salary;
 
-    @Column(nullable = false)
-    private Integer appointmentDuration = 30;
 
     @ManyToMany
     @JoinTable(
@@ -67,11 +65,5 @@ public class Doctor {
         return this.services.removeIf(s -> s.getId().equals(service.getId()));
     }
 
-    @PrePersist
-    @PreUpdate
-    public void setDefaultValues() {
-        if (appointmentDuration == null) {
-            appointmentDuration = 30; // Valor por defecto
-        }
-    }
+
 }

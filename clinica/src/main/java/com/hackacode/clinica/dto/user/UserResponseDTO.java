@@ -1,5 +1,6 @@
 package com.hackacode.clinica.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hackacode.clinica.model.Role;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserResponseDTO {
 
     private Long id;

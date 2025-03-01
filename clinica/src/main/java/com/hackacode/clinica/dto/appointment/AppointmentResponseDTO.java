@@ -1,5 +1,7 @@
 package com.hackacode.clinica.dto.appointment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hackacode.clinica.dto.doctor.DoctorResponseDTO;
 import com.hackacode.clinica.dto.patient.PatientResponseDTO;
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppointmentResponseDTO {
     private Long id;
     private LocalDateTime dateTime;

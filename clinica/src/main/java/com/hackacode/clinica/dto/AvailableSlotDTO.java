@@ -11,5 +11,5 @@ public class AvailableSlotDTO {
 
     private String date;
 
-    private List<AvailableTimeDTO> times;
+    private List<String> times;
 }

@@ -17,7 +17,6 @@ public interface IAppointmentService {
     Page<AppointmentResponseDTO> findAll(Pageable pageable);
     AppointmentResponseDTO save(AppointmentRequestDTO appointmentRequestDTO);
     AppointmentResponseDTO update(Long appoitmentId, AppointmentUpdateDTO appointmentUpdateDTO);
-    boolean isPatientAvailable(Patient patient, LocalDateTime startTime, LocalDateTime endTime);
     List<DoctorAvailabilityDTO> getAvailabilityForService(Long serviceId, LocalDate from, LocalDate to);
     void deleteById(Long id);
 

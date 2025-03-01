@@ -1,5 +1,6 @@
 package com.hackacode.clinica.service;
 
+import com.hackacode.clinica.config.AppConstants;
 import com.hackacode.clinica.dto.*;
 import com.hackacode.clinica.dto.appointment.AppointmentRequestDTO;
 import com.hackacode.clinica.dto.appointment.AppointmentResponseDTO;
@@ -21,6 +22,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -47,21 +49,17 @@ public class AppointmentService implements IAppointmentService {
     @Override
     public AppointmentResponseDTO save(AppointmentRequestDTO appointmentRequestDTO) {
         LocalDateTime startTime = appointmentRequestDTO.getDate().atTime(appointmentRequestDTO.getTime());
+        LocalDateTime endTime = startTime.plusMinutes(AppConstants.APPOINTMENT_DURATION_MINUTES);
         var service = serviceService.getServiceEntityById(appointmentRequestDTO.getServiceId());
         var patient = patientService.getPatientById(appointmentRequestDTO.getPatientId());
         var doctor = doctorService.getDoctorById(appointmentRequestDTO.getDoctorId());
-        if(!doctorService.ifDoctorProvidesService(appointmentRequestDTO.getServiceId(), doctor.getId())) {
-            throw new BadRequestException("The doctor with id: " + doctor.getId()
-                    + " does not provide the service with id: " + service.getId());
-        }
-        LocalDateTime endTime = startTime.plusMinutes(doctor.getAppointmentDuration());
-        if(!doctorService.ifDoctorWorksThisDayAtTime(doctor.getId(),startTime, endTime)) {
-            throw new BadRequestException("The doctor with id: " + doctor.getId()
-                    + " does not work this day at time:" + startTime);
-        }
-        if(appointmentRepository.existsBookedAppointment(doctor.getId(), startTime, endTime)){
-            throw new ConflictException("The appointment is already booked!");
-        };
+
+        validateAppointmentDateTime(startTime);
+        validateIfDoctorProvidesService(service.getId(), doctor.getId());
+        validateIfDoctorWorksThisDayAtTime(doctor.getId(), startTime, endTime);
+        validateIfAppointmentIsBooked(doctor.getId(), startTime, endTime);
+        validateIfPatientIsAvailable(patient, startTime, endTime);
+
         var appointment = appointmentMapper.toEntity(appointmentRequestDTO);
         appointment.setPatient(patient);
         appointment.setService(service);
@@ -74,9 +72,15 @@ public class AppointmentService implements IAppointmentService {
 
     @Override
     public List<DoctorAvailabilityDTO> getAvailabilityForService(Long serviceId, LocalDate from, LocalDate to) {
+        if (from.isBefore(LocalDate.now()) || to.isBefore(LocalDate.now())) {
+            throw new BadRequestException("None of the dates cannot be earlier than today");
+        }
+        if (ChronoUnit.DAYS.between(from, to) >= 5) {
+            throw new BadRequestException("The difference between fromDate and toDate cannot exceed 5 days");
+        }
         List<Doctor> doctors = doctorRepository.findByServices_id(serviceId);
         List<DoctorAvailabilityDTO> doctorAvailabilityDTOS = new ArrayList<>();
-        for(Doctor doctor : doctors) {
+        for (Doctor doctor : doctors) {
             doctorAvailabilityDTOS.add(DoctorAvailabilityDTO.builder()
                     .doctorId(doctor.getId())
                     .doctorName(doctor.getUser().getName() + " " + doctor.getUser().getSurname())
@@ -89,7 +93,7 @@ public class AppointmentService implements IAppointmentService {
 
     @Override
     public void deleteById(Long id) {
-        if(!appointmentRepository.existsById(id)) {
+        if (!appointmentRepository.existsById(id)) {
             this.getById(id);
         }
         appointmentRepository.deleteById(id);
@@ -99,50 +103,38 @@ public class AppointmentService implements IAppointmentService {
     @Override
     public AppointmentResponseDTO update(Long appoitmentId, AppointmentUpdateDTO appointmentUpdateDTO) {
         Appointment appointment = this.getById(appoitmentId);
-        if(appointment.getStatus() == AppointmentStatus.CANCELLED){
+        if (appointment.getStatus() == AppointmentStatus.CANCELLED) {
             throw new BadRequestException("Cannot modify a cancelled appointment");
         }
         //TODO: Generar la factura cuando se pasa a estado COMPLETED
         appointment.setStatus(appointmentUpdateDTO.getStatus());
-        if(appointmentUpdateDTO.getComments() != null){
+        if (appointmentUpdateDTO.getComments() != null) {
             appointment.setComments(appointmentUpdateDTO.getComments());
         }
         appointmentRepository.save(appointment);
         return appointmentMapper.toResponseDTO(appointment);
     }
 
-    @Override
-    public boolean isPatientAvailable(Patient patient, LocalDateTime startTime, LocalDateTime endTime) {
-        return patient.getAppointments().stream()
-                .noneMatch(appointment ->
-                        appointment.getStartTime().isBefore(endTime) &&
-                                appointment.getEndTime().isAfter(startTime));
-    }
-
     private List<AvailableSlotDTO> getAvailableTimesForDoctor(Doctor doctor, LocalDate from, LocalDate to) {
         List<AvailableSlotDTO> availableDates = new ArrayList<>();
-        while(from.isBefore(to) || from.equals(to)) {
-            if(ifDoctorWorksThisDay(doctor, from.getDayOfWeek())){
+        while (from.isBefore(to) || from.equals(to)) {
+            if (ifDoctorWorksThisDay(doctor, from.getDayOfWeek())) {
                 List<LocalTime> bookedTimes = appointmentRepository.findBookedTimesByStatusAndDateAndDoctorId(
                         AppointmentStatus.BOOKED,
                         from,
                         doctor.getId()).stream().map(LocalDateTime::toLocalTime).toList();
                 List<WorkingHour> workingHours = getWorkingHourForADay(doctor, from.getDayOfWeek());
-                List<AvailableTimeDTO> availableTimes = new ArrayList<>();
-                for(WorkingHour workingHour : workingHours) {
+                List<String> availableTimes = new ArrayList<>();
+                for (WorkingHour workingHour : workingHours) {
                     LocalTime timeFrom = workingHour.getTimeFrom();
-                    while(timeFrom.isBefore(workingHour.getTimeTo())) {
-                        if(!bookedTimes.contains(timeFrom)) {
-                            availableTimes.add(AvailableTimeDTO.builder()
-                                    .time(timeFrom.toString())
-                                    .durationInMinutes(doctor.getAppointmentDuration())
-                                    .build()
-                            );
+                    while (timeFrom.isBefore(workingHour.getTimeTo())) {
+                        if (!bookedTimes.contains(timeFrom)) {
+                            availableTimes.add(timeFrom.toString());
                         }
-                        timeFrom = timeFrom.plusMinutes(doctor.getAppointmentDuration());
+                        timeFrom = timeFrom.plusMinutes(AppConstants.APPOINTMENT_DURATION_MINUTES);
                     }
                 }
-                if(!availableTimes.isEmpty()) {
+                if (!availableTimes.isEmpty()) {
                     availableDates.add(
                             AvailableSlotDTO.builder()
                                     .date(from.toString())
@@ -163,11 +155,6 @@ public class AppointmentService implements IAppointmentService {
                 .toList();
     }
 
-
-    private boolean ifDoctorProvidesService(Doctor doctor, com.hackacode.clinica.model.Service service) {
-        return doctor.getServices().stream().anyMatch(s -> s.getId().equals(service.getId()));
-    }
-
     private boolean ifDoctorWorksThisDay(Doctor doctor, DayOfWeek dayOfWeek) {
         return doctor.getWorkingHours().stream().anyMatch(wh -> wh.getDayOfWeek().equals(dayOfWeek));
     }
@@ -177,15 +164,40 @@ public class AppointmentService implements IAppointmentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment with id: " + id + " not found!"));
     }
 
-    private boolean ifDoctorWorksThisDayAtTime(Doctor doctor, LocalDateTime dateTime) {
-        return doctor.getWorkingHours().stream().anyMatch(
-                wh -> ((wh.getDayOfWeek().equals(dateTime.getDayOfWeek())
-                    && !dateTime.toLocalTime().isBefore(wh.getTimeFrom())
-                    && !dateTime.toLocalTime().isAfter(wh.getTimeTo()))));
+    private void validateAppointmentDateTime(LocalDateTime dateTime) {
+        if (dateTime.isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("The appointment date time cannot be before current date");
+        }
     }
 
+    private void validateIfDoctorProvidesService(Long serviceId, Long doctorId) {
+        if (!doctorService.ifDoctorProvidesService(serviceId, doctorId)) {
+            throw new BadRequestException("The doctor with id: " + doctorId
+                    + " does not provide the service with id: " + serviceId);
+        }
+    }
 
+    private void validateIfDoctorWorksThisDayAtTime(Long doctorId, LocalDateTime startTime, LocalDateTime endTime) {
+        if (!doctorService.ifDoctorWorksThisDayAtTime(doctorId, startTime, endTime)) {
+            throw new BadRequestException("The doctor with id: " + doctorId
+                    + " does not work this day at time:" + startTime);
+        }
+    }
 
+    private void validateIfAppointmentIsBooked(Long doctorId, LocalDateTime startTime, LocalDateTime endTime) {
+        if (appointmentRepository.existsBookedAppointment(doctorId, startTime, endTime)) {
+            throw new ConflictException("The appointment is already booked!");
+        }
+    }
+
+    private void validateIfPatientIsAvailable(Patient patient, LocalDateTime startTime, LocalDateTime endTime) {
+        if (patient.getAppointments().stream().anyMatch(
+                appointment -> (appointment.getStartTime().isBefore(endTime)
+                        && appointment.getEndTime().isAfter(startTime) || (appointment.getStartTime().equals(startTime
+                ) && appointment.getEndTime().equals(endTime))) && appointment.getStatus().equals(AppointmentStatus.BOOKED))) {
+            throw new BadRequestException("The patient is not available!.");
+        }
+    }
 
 
 }

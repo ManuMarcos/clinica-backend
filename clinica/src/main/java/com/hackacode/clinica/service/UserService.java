@@ -62,11 +62,11 @@ public class UserService implements IUserService {
 
     @Override
     public void createDefaultUser() {
-        if (userRepository.findByEmail("admin@hackacode.com").isEmpty()){
+        if (userRepository.findByEmail("admin@medpoint.com").isEmpty()){
         User user = new User();
         user.setName("admin");
         user.setSurname("admin");
-        user.setEmail("admin@hackacode.com");
+        user.setEmail("admin@medpoint.com");
         user.setPassword(passwordEncoder.encode("admin"));
         user.setRole(Role.ADMIN);
         user.setDni("0000000");
