@@ -1,22 +1,29 @@
 package com.hackacode.clinica.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+@Data
 @Entity
+@Builder
+@NoArgsConstructor @AllArgsConstructor
 public class InvoiceItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private BigDecimal discount;
-
+    @Column(nullable = false)
     private BigDecimal price;
 
-    private BigDecimal finalPrice;
+    @Column(nullable = false)
+    private String description;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Invoice invoice;
 }

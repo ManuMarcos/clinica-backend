@@ -19,15 +19,26 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppointmentResponseDTO {
     private Long id;
+
+    @JsonProperty("date_time")
     private LocalDateTime dateTime;
+
     private AppointmentStatus status;
+
     @JsonProperty("doctor_name")
     private String doctorName;
+
+    @JsonProperty("doctor_speciality")
+    private String doctorSpeciality;
+
     @JsonProperty("patient_name")
     private String patientName;
+
     @JsonProperty("service_name")
     private String serviceName;
+
     @JsonProperty("service_code")
     private String serviceCode;
+
     private String comments;
 }

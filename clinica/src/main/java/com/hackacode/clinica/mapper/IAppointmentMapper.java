@@ -13,8 +13,11 @@ IDoctorMapper.class})
 public interface IAppointmentMapper {
 
     @Mapping(target = "dateTime", source = "startTime")
-    @Mapping(target = "patientName", source = "patient.user.name")
-    @Mapping(target = "doctorName", source = "doctor.user.name")
+    @Mapping(target = "patientName", expression = "java(appointment.getPatient().getUser().getName() " +
+            "+ \" \" + appointment.getPatient().getUser().getSurname())")
+    @Mapping(target = "doctorName", expression = "java(appointment.getDoctor().getUser().getName() " +
+            "+ \" \" + appointment.getDoctor().getUser().getSurname())")
+    @Mapping(target = "doctorSpeciality", expression = "java(appointment.getDoctor().getSpeciality().getName())")
     @Mapping(target = "serviceName", source = "service.name")
     @Mapping(target = "serviceCode", source = "service.serviceCode")
     AppointmentResponseDTO toResponseDTO(Appointment appointment);

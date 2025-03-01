@@ -33,11 +33,11 @@ import java.util.List;
 public class AppointmentService implements IAppointmentService {
 
     private final IAppointmentRepository appointmentRepository;
-    private final IServiceRepository serviceRepository;
     private final IAppointmentMapper appointmentMapper;
     private final ServiceService serviceService;
     private final PatientService patientService;
     private final DoctorService doctorService;
+    private final IInvoiceService invoiceService;
     private final IDoctorRepository doctorRepository;
 
 
@@ -60,6 +60,8 @@ public class AppointmentService implements IAppointmentService {
         validateIfAppointmentIsBooked(doctor.getId(), startTime, endTime);
         validateIfPatientIsAvailable(patient, startTime, endTime);
 
+
+        var invoice = invoiceService.createServiceInvoice(service, patient);
         var appointment = appointmentMapper.toEntity(appointmentRequestDTO);
         appointment.setPatient(patient);
         appointment.setService(service);
@@ -67,6 +69,7 @@ public class AppointmentService implements IAppointmentService {
         appointment.setStartTime(startTime);
         appointment.setEndTime(endTime);
         appointment.setStatus(AppointmentStatus.BOOKED);
+        appointment.setInvoice(invoice);
         return appointmentMapper.toResponseDTO(appointmentRepository.save(appointment));
     }
 

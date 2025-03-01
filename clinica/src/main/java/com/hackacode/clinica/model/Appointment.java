@@ -36,5 +36,7 @@ public class Appointment {
     @ManyToOne(optional = false)
     private Service service;
 
-    private boolean isFromPackage;
+    @OneToOne
+    private Invoice invoice;
+
 }
