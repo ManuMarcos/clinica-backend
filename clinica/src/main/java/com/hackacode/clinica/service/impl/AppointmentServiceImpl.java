@@ -1,4 +1,4 @@
-package com.hackacode.clinica.service;
+package com.hackacode.clinica.service.impl;
 
 import com.hackacode.clinica.config.AppConstants;
 import com.hackacode.clinica.dto.*;
@@ -12,13 +12,12 @@ import com.hackacode.clinica.mapper.IAppointmentMapper;
 
 import com.hackacode.clinica.model.*;
 import com.hackacode.clinica.repository.*;
-import com.itextpdf.io.exceptions.IOException;
+import com.hackacode.clinica.service.*;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,16 +39,17 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AppointmentService implements IAppointmentService {
+public class AppointmentServiceImpl implements IAppointmentService {
 
     private final IAppointmentRepository appointmentRepository;
     private final IAppointmentMapper appointmentMapper;
-    private final ServiceService serviceService;
-    private final PatientService patientService;
-    private final DoctorService doctorService;
+    private final ServiceServiceImpl serviceService;
+    private final PatientServiceImpl patientService;
+    private final DoctorServiceImpl doctorService;
     private final IInvoiceService invoiceService;
     private final IDoctorRepository doctorRepository;
-    private final EmailService emailService;
+    private final EmailServiceImpl emailService;
+    private final IPdfExporter pdfExporter;
 
 
 
@@ -118,29 +118,9 @@ public class AppointmentService implements IAppointmentService {
         appointmentRepository.deleteById(id);
     }
 
-    public byte[] exportAppointmentToPDF(Long appointmentId) {
+    public byte[] exportToPdf(Long appointmentId) {
         Appointment appointment = this.getById(appointmentId);
-        User patientInfo = appointment.getPatient().getUser();
-        User doctorInfo = appointment.getDoctor().getUser();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        try{
-            PdfWriter writer = new PdfWriter(baos);
-            PdfDocument pdfDocument =  new PdfDocument(writer);
-            Document document = new Document(pdfDocument);
-            document.add(new Paragraph("Comprobante de Turno"));
-            document.add(new Paragraph("Id: " + appointmentId));
-            document.add(new Paragraph("Paciente: " + patientInfo.getName() + " " +
-                    patientInfo.getSurname()));
-            document.add(new Paragraph("Doctor: " + doctorInfo.getName() + " " + doctorInfo.getSurname()));
-            document.add(new Paragraph("Servicio: " + appointment.getService().getName()));
-            DateTimeFormatter formatter  = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-            document.add(new Paragraph("Fecha: " + appointment.getStartTime().format(formatter)));
-            document.close();
-        } catch (Exception e){
-            throw new InternalError(e.getMessage());
-        }
-        return baos.toByteArray();
+        return pdfExporter.generatePdf(appointment);
     }
 
 

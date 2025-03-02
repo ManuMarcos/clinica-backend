@@ -1,14 +1,15 @@
-package com.hackacode.clinica.service;
+package com.hackacode.clinica.service.impl;
 
 import com.hackacode.clinica.config.AppConstants;
 import com.hackacode.clinica.model.*;
 import com.hackacode.clinica.model.Package;
+import com.hackacode.clinica.service.IInvoiceFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @org.springframework.stereotype.Service
-public class InvoiceFactory {
+public class InvoiceFactoryImpl implements IInvoiceFactory {
 
     public Invoice createServiceInvoice(Service service, Patient patient){
         Invoice invoice = createInvoice(patient);
@@ -26,7 +27,7 @@ public class InvoiceFactory {
         return invoice;
     }
 
-    public void applyDiscounts(Invoice invoice, Patient patient){
+    private void applyDiscounts(Invoice invoice, Patient patient){
         if(invoice.getItems().size() > 1){
             InvoiceItem item = new InvoiceItem();
             BigDecimal packageDiscount = invoice.getSubTotal().multiply(AppConstants.PACKAGE_DISCOUNT);

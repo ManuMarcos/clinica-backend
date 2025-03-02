@@ -1,11 +1,9 @@
 package com.hackacode.clinica.controller;
 
-import com.hackacode.clinica.dto.appointment.AppointmentRequestDTO;
-import com.hackacode.clinica.dto.appointment.AppointmentResponseDTO;
 import com.hackacode.clinica.dto.service.ServiceRequestDTO;
 import com.hackacode.clinica.dto.service.ServiceResponseDTO;
 import com.hackacode.clinica.mapper.IAppointmentMapper;
-import com.hackacode.clinica.service.AppointmentService;
+import com.hackacode.clinica.service.impl.AppointmentServiceImpl;
 import com.hackacode.clinica.service.IServiceService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,7 +23,7 @@ public class ServiceController {
 
     private final IServiceService serviceService;
     private final IAppointmentMapper appointmentMapper;
-    private final AppointmentService appointmentService;
+    private final AppointmentServiceImpl appointmentService;
 
     @GetMapping
     public List<ServiceResponseDTO> getAll(Pageable pageable) {

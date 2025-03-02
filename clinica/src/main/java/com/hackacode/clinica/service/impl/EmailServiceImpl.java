@@ -1,6 +1,7 @@
-package com.hackacode.clinica.service;
+package com.hackacode.clinica.service.impl;
 
 
+import com.hackacode.clinica.service.IEmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class EmailService {
+public class EmailServiceImpl implements IEmailService {
 
     private final JavaMailSender emailSender;
 

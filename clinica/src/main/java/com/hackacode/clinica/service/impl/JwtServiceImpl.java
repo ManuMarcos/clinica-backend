@@ -1,7 +1,6 @@
-package com.hackacode.clinica.service;
+package com.hackacode.clinica.service.impl;
 
-import com.hackacode.clinica.model.RefreshToken;
-import com.hackacode.clinica.model.User;
+import com.hackacode.clinica.service.IJwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -9,21 +8,18 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.crypto.SecretKey;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 
 @Service
-public class JwtService {
+public class JwtServiceImpl implements IJwtService {
 
     @Value("${JWT_SECRET}")
     private String SECRET_KEY; 
@@ -41,6 +37,39 @@ public class JwtService {
 
     public String generateRefreshToken(UserDetails usuario, Long userId){
         return this.buildToken(new HashMap<>(), usuario, REFRESH_TOKEN_EXPIRATION, userId);
+    }
+
+    public String getUsernameFromToken(String token) {
+        return getClaim(token, Claims::getSubject);
+    }
+
+    public Long getUserIdFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims.get("userId", Long.class);
+    }
+
+    public List<String> getRolesFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims.get("roles", List.class);
+    }
+
+    public <T> T getClaim(String token, Function<Claims, T> claimsResolver ) {
+        final Claims claims = getClaimsFromToken(token);
+        return claimsResolver.apply(claims);
+    }
+
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        final String username = getUsernameFromToken(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    public String getTokenFromCurrentRequest() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes == null) {
+            return null;
+        }
+        HttpServletRequest request = attributes.getRequest();
+        return extractToken(request);
     }
 
     private String buildToken(Map<String, Object> extraClaims, UserDetails usuario, Long expiracion, Long userId){
@@ -64,36 +93,12 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String getUsernameFromToken(String token) {
-        return getClaim(token, Claims::getSubject);
-    }
-
-    public Long getUserIdFromToken(String token) {
-        Claims claims = getClaimsFromToken(token);
-        return claims.get("userId", Long.class);
-    }
-
-    public List<String> getRolesFromToken(String token) {
-        Claims claims = getClaimsFromToken(token);
-        return claims.get("roles", List.class);
-    }
-
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-    }
-
     private Claims getClaimsFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(getSignInKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-    }
-
-    public <T> T getClaim(String token, Function<Claims, T> claimsResolver ) {
-        final Claims claims = getClaimsFromToken(token);
-        return claimsResolver.apply(claims);
     }
 
     private Date getExpiration(String token){
@@ -110,14 +115,5 @@ public class JwtService {
             return null;
         }
         return authHeader.substring(7);
-    }
-
-    public String getTokenFromCurrentRequest() {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (attributes == null) {
-            return null;
-        }
-        HttpServletRequest request = attributes.getRequest();
-        return extractToken(request);
     }
 }

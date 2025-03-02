@@ -1,25 +1,25 @@
-package com.hackacode.clinica.service;
+package com.hackacode.clinica.service.impl;
 
 import com.hackacode.clinica.dto.patient.PatientRequestDTO;
 import com.hackacode.clinica.dto.patient.PatientResponseDTO;
-import com.hackacode.clinica.dto.user.UserRequestDTO;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
 import com.hackacode.clinica.mapper.IPatientMapper;
 import com.hackacode.clinica.model.Patient;
 import com.hackacode.clinica.model.Role;
 import com.hackacode.clinica.repository.IPatientRepository;
+import com.hackacode.clinica.service.IPatientService;
+import com.hackacode.clinica.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PatientService implements IPatientService {
+public class PatientServiceImpl implements IPatientService {
 
     private final IPatientRepository patientRepository;
     private final IPatientMapper patientMapper;

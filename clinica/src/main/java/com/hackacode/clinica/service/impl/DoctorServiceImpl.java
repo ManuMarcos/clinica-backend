@@ -1,6 +1,5 @@
-package com.hackacode.clinica.service;
+package com.hackacode.clinica.service.impl;
 
-import com.hackacode.clinica.dto.ServiceToDoctorRequestDTO;
 import com.hackacode.clinica.dto.doctor.DoctorRequestDTO;
 import com.hackacode.clinica.dto.doctor.DoctorResponseDTO;
 import com.hackacode.clinica.dto.workingHour.WorkingHourRequestDTO;
@@ -8,37 +7,32 @@ import com.hackacode.clinica.exception.BadRequestException;
 import com.hackacode.clinica.exception.ResourceNotFoundException;
 import com.hackacode.clinica.exception.UnauthorizedException;
 import com.hackacode.clinica.mapper.IDoctorMapper;
-import com.hackacode.clinica.mapper.IServiceMapper;
 import com.hackacode.clinica.mapper.IWorkingHourMapper;
 import com.hackacode.clinica.model.Doctor;
 import com.hackacode.clinica.model.Role;
-import com.hackacode.clinica.model.Speciality;
 import com.hackacode.clinica.repository.IDoctorRepository;
 import com.hackacode.clinica.repository.IServiceRepository;
 import com.hackacode.clinica.repository.ISpecialityRepository;
 import com.hackacode.clinica.repository.IWorkingHourRepository;
-import jakarta.persistence.EntityManager;
+import com.hackacode.clinica.service.IDoctorService;
+import com.hackacode.clinica.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class DoctorService implements IDoctorService {
+public class DoctorServiceImpl implements IDoctorService {
 
     private final IDoctorRepository doctorRepository;
     private final IWorkingHourRepository workingHourRepository;
-    private final AuthService authService;
+    private final AuthServiceImpl authService;
     private final ISpecialityRepository specialityRepository;
     private final IDoctorMapper doctorMapper;
     private final IUserService userService;

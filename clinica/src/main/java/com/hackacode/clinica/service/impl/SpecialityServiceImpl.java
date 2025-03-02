@@ -1,4 +1,4 @@
-package com.hackacode.clinica.service;
+package com.hackacode.clinica.service.impl;
 
 import com.hackacode.clinica.dto.speciality.SpecialityRequestDTO;
 import com.hackacode.clinica.dto.speciality.SpecialityResponseDTO;
@@ -8,6 +8,7 @@ import com.hackacode.clinica.mapper.ISpecialityMapper;
 import com.hackacode.clinica.model.Speciality;
 import com.hackacode.clinica.repository.IDoctorRepository;
 import com.hackacode.clinica.repository.ISpecialityRepository;
+import com.hackacode.clinica.service.ISpecialityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class SpecialityService implements ISpecialityService {
+public class SpecialityServiceImpl implements ISpecialityService {
 
     private final ISpecialityRepository specialityRepository;
     private final IDoctorRepository doctorRepository;

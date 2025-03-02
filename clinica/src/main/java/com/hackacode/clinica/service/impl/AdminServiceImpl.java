@@ -1,12 +1,13 @@
-package com.hackacode.clinica.service;
+package com.hackacode.clinica.service.impl;
 
 import com.hackacode.clinica.dto.admin.AdminRequestDTO;
 import com.hackacode.clinica.dto.admin.AdminResponseDTO;
-import com.hackacode.clinica.dto.user.UserRequestDTO;
 import com.hackacode.clinica.mapper.IAdminMapper;
 import com.hackacode.clinica.mapper.IUserMapper;
 import com.hackacode.clinica.model.Role;
 import com.hackacode.clinica.repository.IAdminRepository;
+import com.hackacode.clinica.service.IAdminService;
+import com.hackacode.clinica.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,11 +15,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @Service
-public class AdminService implements IAdminService {
+public class AdminServiceImpl implements IAdminService {
 
     private final IAdminRepository adminRepository;
     private final IAdminMapper adminMapper;

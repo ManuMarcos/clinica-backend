@@ -3,7 +3,7 @@ package com.hackacode.clinica.controller;
 import com.hackacode.clinica.dto.authentication.AccessTokenDTO;
 import com.hackacode.clinica.dto.authentication.LoginRequestDTO;
 import com.hackacode.clinica.dto.authentication.LoginResponseDTO;
-import com.hackacode.clinica.service.AuthService;
+import com.hackacode.clinica.service.impl.AuthServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthService authService;
+    private final AuthServiceImpl authService;
 
     @Operation(summary = "User Authentication",
             description = "This endpoint allows users to authenticate using their credentials (username and password) to receive a JWT token, which will be used for accessing other API resources.")

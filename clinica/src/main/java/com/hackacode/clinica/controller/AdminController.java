@@ -4,7 +4,7 @@ package com.hackacode.clinica.controller;
 import com.hackacode.clinica.dto.page.PaginatedResponseDTO;
 import com.hackacode.clinica.dto.admin.AdminRequestDTO;
 import com.hackacode.clinica.dto.admin.AdminResponseDTO;
-import com.hackacode.clinica.service.AdminService;
+import com.hackacode.clinica.service.impl.AdminServiceImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
-    private final AdminService adminService;
+    private final AdminServiceImpl adminService;
 
     @PostMapping
     public ResponseEntity<AdminResponseDTO> create(@Valid @RequestBody AdminRequestDTO adminRequestDTO) {

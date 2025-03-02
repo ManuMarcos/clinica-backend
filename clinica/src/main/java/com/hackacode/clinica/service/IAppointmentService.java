@@ -19,5 +19,5 @@ public interface IAppointmentService {
     AppointmentResponseDTO update(Long appoitmentId, AppointmentUpdateDTO appointmentUpdateDTO);
     List<DoctorAvailabilityDTO> getAvailabilityForService(Long serviceId, LocalDate from, LocalDate to);
     void deleteById(Long id);
-    byte[] exportAppointmentToPDF(Long appointmentId);
+    public byte[] exportToPdf(Long appointmentId);
 }

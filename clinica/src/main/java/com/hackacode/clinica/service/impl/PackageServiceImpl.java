@@ -1,4 +1,4 @@
-package com.hackacode.clinica.service;
+package com.hackacode.clinica.service.impl;
 
 import com.hackacode.clinica.dto.DiscountDTO;
 import com.hackacode.clinica.dto.service.ServiceResponseDTO;
@@ -11,6 +11,8 @@ import com.hackacode.clinica.model.Package;
 import com.hackacode.clinica.repository.IPatientRepository;
 import com.hackacode.clinica.repository.IServiceRepository;
 import com.hackacode.clinica.repository.IPackageRepository;
+import com.hackacode.clinica.service.IPackageService;
+import com.hackacode.clinica.service.IServiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 
@@ -20,13 +22,13 @@ import java.util.List;
 
 @org.springframework.stereotype.Service
 @RequiredArgsConstructor
-public class PackageService implements IPackageService {
+public class PackageServiceImpl implements IPackageService {
 
     private final IPackageRepository packageRepository;
     private final IServiceService Service;
     private final IPatientRepository patientRepository;
     private final IServiceRepository ServiceRepository;
-    private final AuthService authService;
+    private final AuthServiceImpl authService;
     private final IServiceMapper serviceMapper;
 
     @Override

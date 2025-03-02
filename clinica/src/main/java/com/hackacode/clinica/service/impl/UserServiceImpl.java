@@ -1,4 +1,4 @@
-package com.hackacode.clinica.service;
+package com.hackacode.clinica.service.impl;
 
 import com.hackacode.clinica.dto.user.UserRequestDTO;
 import com.hackacode.clinica.dto.user.UserResponseDTO;
@@ -8,6 +8,7 @@ import com.hackacode.clinica.mapper.IUserMapper;
 import com.hackacode.clinica.model.Role;
 import com.hackacode.clinica.model.User;
 import com.hackacode.clinica.repository.IUserRepository;
+import com.hackacode.clinica.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements IUserService {
+public class UserServiceImpl implements IUserService {
 
     private final IUserRepository userRepository;
     private final IUserMapper userMapper;

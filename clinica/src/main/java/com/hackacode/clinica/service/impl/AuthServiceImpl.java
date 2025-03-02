@@ -1,4 +1,4 @@
-package com.hackacode.clinica.service;
+package com.hackacode.clinica.service.impl;
 
 import com.hackacode.clinica.dto.authentication.AccessTokenDTO;
 import com.hackacode.clinica.dto.authentication.LoginRequestDTO;
@@ -7,6 +7,7 @@ import com.hackacode.clinica.exception.ResourceNotFoundException;
 import com.hackacode.clinica.mapper.IUserMapper;
 import com.hackacode.clinica.model.*;
 import com.hackacode.clinica.repository.*;
+import com.hackacode.clinica.service.IAuthService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,10 +25,10 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthServiceImpl implements IAuthService {
 
     private final IUserRepository userRepository;
-    private final JwtService jwtService;
+    private final JwtServiceImpl jwtService;
     private final AuthenticationManager authenticationManager;
     private final IRefreshTokenRepository refreshTokenRepository;
     private final IUserMapper userMapper;
@@ -74,26 +75,6 @@ public class AuthService {
                 .build();
     }
 
-
-
-
-    public boolean isPatient(){
-        return hasRole("PATIENT");
-    }
-
-    public boolean isAdmin() {
-        return hasRole("ADMIN");
-    }
-
-    private boolean hasRole(String role) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            return authorities.stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_" + role));
-        }
-        return false;
-    }
-
     public String getCurrentUserEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
@@ -112,6 +93,21 @@ public class AuthService {
         ).toList();
     }
 
+    public boolean isPatient(){
+        return hasRole("PATIENT");
+    }
 
+    public boolean isAdmin() {
+        return hasRole("ADMIN");
+    }
+
+    private boolean hasRole(String role) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+            return authorities.stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_" + role));
+        }
+        return false;
+    }
 
 }
